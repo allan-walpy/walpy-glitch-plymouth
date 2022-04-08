@@ -5,6 +5,55 @@ NoColor='\033[0m'
 
 sleep 1
 
+echo -e "${Color}plymouth://process/changemode --type boot-up ${NoColor}"
+plymouth change-mode --boot-up
+sleep 10
+
+#echo -e "${Color}plymouth://process/password --prompt ${NoColor}"
+#plymouth ask-for-password --prompt="filesystem encrypted" --number-of-tries=3 --dont-pause-process
+#sleep 3
+#echo -e "${Color}plymouth://process/message --output display ${NoColor}"
+plymouth display-message --text="password correct"
+sleep 1
+plymouth hide-message --text="password correct"
+sleep 0.5
+
+#echo -e "${Color}plymouth://process/question --prompt ${NoColor}"
+#plymouth ask-question --prompt="decrypt filesystem" --dont-pause-process
+#sleep 3
+#echo -e "${Color}plymouth://process/message --output display ${NoColor}"
+plymouth display-message --text="filesystem decrypted"
+sleep 1
+plymouth hide-message --text="filesystem decrypted"
+sleep 0.5
+
+echo -e "${Color}plymouth://process/changemode --type updates ${NoColor}"
+plymouth change-mode --updates
+sleep 0.3
+plymouth system-update --progress 0
+sleep 0.2
+plymouth system-update --progress 20
+sleep 0.2
+plymouth system-update --progress 30
+sleep 0.2
+plymouth system-update --progress 40
+sleep 0.2
+plymouth system-update --progress 50
+sleep 0.2
+plymouth system-update --progress 60
+sleep 0.2
+plymouth system-update --progress 70
+sleep 0.2
+plymouth system-update --progress 80
+sleep 0.2
+plymouth system-update --progress 90
+sleep 0.2
+plymouth system-update --progress 100
+sleep 0.5
+
+echo -e "${Color}plymouth://process/changemode --type system-upgrade ${NoColor}"
+plymouth change-mode --system-upgrade
+sleep 0.3
 echo -e "${Color}plymouth://process/update/system ${NoColor}"
 plymouth system-update --progress 0
 sleep 0.2
@@ -26,33 +75,40 @@ plymouth system-update --progress 90
 sleep 0.2
 plymouth system-update --progress 100
 sleep 0.5
-echo -e "${Color}plymouth://process/changemode --type system-upgrade ${NoColor}"
-plymouth change-mode --system-upgrade
-sleep 0.5
-echo -e "${Color}plymouth://process/changemode --type boot-up ${NoColor}"
-plymouth change-mode --boot-up
-sleep 0.5
-echo -e "${Color}plymouth://process/changemode --type updates ${NoColor}"
-plymouth change-mode --updates
-sleep 0.5
+
 echo -e "${Color}plymouth://process/changemode --type firmware-upgtrade ${NoColor}"
 plymouth change-mode --firmware-upgrade
+sleep 0.3
+plymouth system-update --progress 0
+sleep 0.2
+plymouth system-update --progress 20
+sleep 0.2
+plymouth system-update --progress 30
+sleep 0.2
+plymouth system-update --progress 40
+sleep 0.2
+plymouth system-update --progress 50
+sleep 0.2
+plymouth system-update --progress 60
+sleep 0.2
+plymouth system-update --progress 70
+sleep 0.2
+plymouth system-update --progress 80
+sleep 0.2
+plymouth system-update --progress 90
+sleep 0.2
+plymouth system-update --progress 100
 sleep 0.5
-echo -e "${Color}plymouth://process/changemode --type shutdown ${NoColor}"
-plymouth change-mode --shutdown
-sleep 0.5
-echo -e "${Color}plymouth://process/changemode --type reboot ${NoColor}"
-plymouth change-mode --reboot
-sleep 0.5
+
 echo -e "${Color}plymouth://process/hide ${NoColor}"
-plymouth --hide-splash
+plymouth quit --retain-splash
 sleep 1
 
 exit 0
 
 # sudo update-alternatives --install /usr/share/plymouth/themes/default.plymouth default.plymouth /usr/share/plymouth/themes/darwin/darwin.plymouth 100
 # sudo update-alternatives --config default.plymouth
-#
+# sudo update-initramfs -u
 # plymouthd --no-daemon --debug
 
 # `Transition` config in `two-step` animation piece code from https://gitlab.freedesktop.org/plymouth/plymouth
@@ -62,3 +118,6 @@ exit 0
 #        plugin->transition = PLY_PROGRESS_ANIMATION_TRANSITION_CROSS_FADE;
 #    else if (strcmp (transition, "merge-fade") == 0)
 #        plugin->transition = PLY_PROGRESS_ANIMATION_TRANSITION_MERGE_FADE;
+
+#Font=Ubuntu 24
+#TitleFont=Ubuntu Light 30

@@ -7,11 +7,13 @@ echo -e "${Color}plymouth://process/start${NoColor}"
 screen -dms git.version -q -U -L -Logfile daemon.$(date +%s).log \
     plymouthd --no-daemon --debug
 sleep 1
+
 echo -e "${Color}plymouth://process/show ${NoColor}"
-plymouth --ping &&
-plymouth --show-splash &&
-sleep 1
+plymouth --show-splash
 ./test || true
 
+sleep 1
+plymouth --hide-splash
+sleep 1
 plymouth --quit
 echo -e "${Color}plymouth://done ${NoColor}"
