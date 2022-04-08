@@ -14,6 +14,9 @@ sleep 1 &&
     echo "${Color}plymouth://process/show ${NoColor}" &&
     plymouth --show-splash &&
     sleep 1 &&
+    echo "${Color}plymouth://process/changemode --type system-upgrade ${NoColor}" &&
+    plymouth change-mode --system-upgrade &&
+    sleep 1 &&
     echo "${Color}plymouth://process/update/system ${NoColor}" &&
     plymouth system-update --progress 0 &&
     sleep 0.1 &&
@@ -40,9 +43,6 @@ sleep 1 &&
     sleep 1 &&
     echo "${Color}plymouth://process/changemode --type updates ${NoColor}" &&
     plymouth change-mode --updates &&
-    sleep 1 &&
-    echo "${Color}plymouth://process/changemode --type system-upgrade ${NoColor}" &&
-    plymouth change-mode --system-upgrade &&
     sleep 1 &&
     echo "${Color}plymouth://process/changemode --type firmware-upgtrade ${NoColor}" &&
     plymouth change-mode --firmware-upgrade &&
