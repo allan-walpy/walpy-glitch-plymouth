@@ -5,15 +5,15 @@ NoColor='\033[0m'
 
 echo -e "${Color}plymouth://process/start${NoColor}"
 screen -dms git.version -q -U -L -Logfile daemon.$(date +%s).log \
-    plymouthd --no-daemon --debug
-sleep 1
+    plymouthd --no-daemon --debug --debug-file=plymouth.log
+sleep 5
 
 echo -e "${Color}plymouth://process/show ${NoColor}"
-plymouth --show-splash
+sudo plymouth --show-splash
 ./test || true
 
 sleep 1
-plymouth --hide-splash
+sudo plymouth --hide-splash
 sleep 1
-plymouth --quit
+sudo plymouth --quit
 echo -e "${Color}plymouth://done ${NoColor}"
