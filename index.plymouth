@@ -1,0 +1,54 @@
+[Plymouth Theme]
+Name=walpy_try
+Description=Personal plymouth theme by allan_walpy
+ModuleName=two-step
+
+[two-step]
+Font=Roboto Mono 12
+TitleFont=Roboto Mono Light 30
+ImageDir=/usr/share/plymouth/themes/waply_glitch
+DialogHorizontalAlignment=.5
+DialogVerticalAlignment=.382
+TitleHorizontalAlignment=.5
+TitleVerticalAlignment=.382
+HorizontalAlignment=.5
+VerticalAlignment=.5
+WatermarkHorizontalAlignment=.5
+WatermarkVerticalAlignment=.96
+Transition=none
+TransitionDuration=0.0
+BackgroundStartColor=0x282828
+BackgroundEndColor=0x282828
+ProgressBarBackgroundColor=0x606060
+ProgressBarForegroundColor=0xffffff
+MessageBelowAnimation=true
+
+[boot-up]
+UseEndAnimation=true
+
+[shutdown]
+UseEndAnimation=true
+
+[reboot]
+UseEndAnimation=true
+
+[updates]
+SuppressMessages=true
+ProgressBarShowPercentComplete=true
+UseProgressBar=true
+Title=process://update --stage installing
+SubTitle=reality://computer --disable shutdown
+
+[system-upgrade]
+SuppressMessages=true
+ProgressBarShowPercentComplete=true
+UseProgressBar=true
+Title=process://upgrade --module system
+SubTitle=reality://computer --disable shutdown
+
+[firmware-upgrade]
+SuppressMessages=true
+ProgressBarShowPercentComplete=true
+UseProgressBar=true
+Title=process://upgrade --module firmware
+SubTitle=reality://computer --disable shutdown
