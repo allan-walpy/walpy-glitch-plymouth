@@ -2,12 +2,19 @@
 
 # first check that we are in an appropriate runlevel rlevel=$(runlevel | cut -d " " -f 2) if [[ "$rlevel" != "2" && "$rlevel" != "3" ]] then echo "ERROR: You must be at runlevel 2 or 3" exit 1 fi
 
-echo "plymouth://process/testing"
-plymouthd --no-daemon --debug &
+Color='\033[0;33m'
+NoColor='\033[0m'
+
+echo -e "${Color}plymouth://process/start${NoColor}"
+plymouthd --no-daemon --debug > daemon.log 2>&1 &
 sleep 1 &&
     plymouth --ping &&
+    echo -e "${Color}plymouth://process/ping ${NoColor}" &&
     plymouth --show-splash &&
-    sleep 10 &&
+    sleep 3 &&
+    echo -e "${Color}plymouth://process/output --type message ${NoColor}" &&
+    plymouth display-message &&
+    echo -e "${Color}plymouth://process/stop ${NoColor}" &&
     plymouth --quit &&
     echo "plymouth://done"
 
