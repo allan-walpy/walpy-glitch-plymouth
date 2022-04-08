@@ -4,16 +4,12 @@ Color='\033[0;33m'
 NoColor='\033[0m'
 
 echo -e "${Color}plymouth://process/start${NoColor}"
-screen -d -m -X -dmS -S playmouth.preview -q -U -L -Logfile daemon.$(date +%s).log \
-    plymouthd --attach-to-session --no-daemon --debug --debug-file=./plymouth.log --no-boot-log
-sleep 1
+sudo -u root plymouthd --no-daemon --debug --no-boot-log &> terminal.log &
 
 echo -e "${Color}plymouth://process/show ${NoColor}"
 sudo plymouth --show-splash
 ./test || true
 
-sleep 1
 sudo plymouth --hide-splash
-sleep 1
 sudo plymouth --quit
 echo -e "${Color}plymouth://done ${NoColor}"

@@ -18,7 +18,7 @@ NoColor='\033[0m'
 #    sleep 1
 #done
 
-sleep 10
+sleep 1
 
 echo -e "${Color}plymouth://process/hide ${NoColor}"
 sudo plymouth quit --retain-splash
