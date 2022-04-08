@@ -1,0 +1,38 @@
+#!/bin/bash
+
+Color='\033[0;33m'
+NoColor='\033[0m'
+
+sleep 1
+echo -e "${Color}plymouth://process/ping ${NoColor}"
+plymouth --ping
+sleep 1
+echo -e "${Color}plymouth://process/show ${NoColor}"
+plymouth --show-splash
+sleep 1
+
+for i in {1..10}
+do
+    echo -e "${Color}plymouth://process/test --number $i ${NoColor}"
+        plymouth --update=test$i
+        sleep 1
+done
+
+echo -e "${Color}plymouth://process/hide ${NoColor}"
+plymouth --hide-splash
+sleep 1
+
+exit 0
+
+# sudo update-alternatives --install /usr/share/plymouth/themes/default.plymouth default.plymouth /usr/share/plymouth/themes/darwin/darwin.plymouth 100
+# sudo update-alternatives --config default.plymouth
+#
+# plymouthd --no-daemon --debug
+
+# `Transition` config in `two-step` animation piece code from https://gitlab.freedesktop.org/plymouth/plymouth
+#  if (strcmp (transition, "fade-over") == 0)
+#        plugin->transition = PLY_PROGRESS_ANIMATION_TRANSITION_FADE_OVER;
+#    else if (strcmp (transition, "cross-fade") == 0)
+#        plugin->transition = PLY_PROGRESS_ANIMATION_TRANSITION_CROSS_FADE;
+#    else if (strcmp (transition, "merge-fade") == 0)
+#        plugin->transition = PLY_PROGRESS_ANIMATION_TRANSITION_MERGE_FADE;
