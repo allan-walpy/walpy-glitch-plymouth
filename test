@@ -3,40 +3,22 @@
 Color='\033[0;33m'
 NoColor='\033[0m'
 
-echo -e "${Color}plymouth://process/changemode --type boot-up ${NoColor}"
-sudo plymouth change-mode --boot-up
+./test.disk
+
+#for i in {1..10}
+#do
+#    sudo plymouth --update=test:$(($i * 10))
+#    sleep 1
+#done
+
+
+#for i in {1..10}
+#do
+#    sudo plymouth --update=event:$i
+#    sleep 1
+#done
+
 sleep 10
-
-echo -e "${Color}plymouth://process/changemode --type system-upgrade ${NoColor}"
-sudo plymouth change-mode --system-upgrade
-sleep 1
-echo -e "${Color}plymouth://process/update/system ${NoColor}"
-sudo plymouth system-update --progress 0
-sleep 1
-sudo plymouth system-update --progress 20
-sleep 1
-sudo plymouth system-update --progress 30
-sleep 1
-sudo plymouth system-update --progress 40
-sleep 1
-sudo plymouth system-update --progress 50
-sleep 1
-sudo plymouth system-update --progress 60
-sleep 1
-sudo plymouth system-update --progress 70
-sleep 1
-sudo plymouth system-update --progress 80
-sleep 1
-sudo plymouth system-update --progress 90
-sleep 1
-sudo plymouth system-update --progress 100
-sleep 2
-
-for i in {1..10}
-do
-    sudo plymouth --update=test$i
-    sleep 2
-done
 
 echo -e "${Color}plymouth://process/hide ${NoColor}"
 sudo plymouth quit --retain-splash

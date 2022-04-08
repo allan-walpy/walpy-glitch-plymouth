@@ -4,9 +4,9 @@ Color='\033[0;33m'
 NoColor='\033[0m'
 
 echo -e "${Color}plymouth://process/start${NoColor}"
-screen -dms git.version -q -U -L -Logfile daemon.$(date +%s).log \
-    plymouthd --no-daemon --debug --debug-file=plymouth.log
-sleep 5
+screen -d -m -X -dmS -S playmouth.preview -q -U -L -Logfile daemon.$(date +%s).log \
+    plymouthd --attach-to-session --no-daemon --debug --debug-file=./plymouth.log --no-boot-log
+sleep 1
 
 echo -e "${Color}plymouth://process/show ${NoColor}"
 sudo plymouth --show-splash
