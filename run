@@ -4,11 +4,13 @@ Color='\033[0;33m'
 NoColor='\033[0m'
 
 echo -e "${Color}plymouth://process/start${NoColor}"
-plymouthd --no-daemon --debug >daemon.log 2>&1 &
+screen -dms git.version -q -U -L -Logfile daemon.$(date +%s).log \
+    plymouthd --no-daemon --debug
 sleep 1
 echo -e "${Color}plymouth://process/show ${NoColor}"
 plymouth --ping &&
 plymouth --show-splash &&
+sleep 1
 ./test || true
 
 plymouth --quit
