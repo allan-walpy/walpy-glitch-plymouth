@@ -4,7 +4,7 @@ Description=Personal plymouth theme by allan_walpy
 ModuleName=two-step
 
 [two-step]
-Font=Roboto Mono 12
+Font=Roboto Mono 24
 TitleFont=Roboto Mono Light 30
 ImageDir=/usr/share/plymouth/themes/walpy-glitch
 DialogHorizontalAlignment=.5
@@ -15,8 +15,8 @@ HorizontalAlignment=.5
 VerticalAlignment=.5
 WatermarkHorizontalAlignment=.5
 WatermarkVerticalAlignment=.96
-Transition=none
-TransitionDuration=0.0
+Transition=merge-fade
+TransitionDuration=0.4
 BackgroundStartColor=0x282828
 BackgroundEndColor=0x282828
 ProgressBarBackgroundColor=0x606060

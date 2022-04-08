@@ -3,17 +3,23 @@
 # first check that we are in an appropriate runlevel rlevel=$(runlevel | cut -d " " -f 2) if [[ "$rlevel" != "2" && "$rlevel" != "3" ]] then echo "ERROR: You must be at runlevel 2 or 3" exit 1 fi
 
 echo "plymouth://process/testing"
-
-echo " start"
-
-sleep 1 && \
-    plymouth --ping && \
-    plymouth --show-splash && \
-    sleep 3 && \
-    plymouth --quit && \
-echo "plymouth://done"
+plymouthd --no-daemon --debug &
+sleep 1 &&
+    plymouth --ping &&
+    plymouth --show-splash &&
+    sleep 10 &&
+    plymouth --quit &&
+    echo "plymouth://done"
 
 # sudo update-alternatives --install /usr/share/plymouth/themes/default.plymouth default.plymouth /usr/share/plymouth/themes/darwin/darwin.plymouth 100
 # sudo update-alternatives --config default.plymouth
 # sudo update-initramfs -u
 # plymouthd --no-daemon --debug
+
+# `Transition` config in `two-step` animation piece code from https://gitlab.freedesktop.org/plymouth/plymouth
+#  if (strcmp (transition, "fade-over") == 0)
+#        plugin->transition = PLY_PROGRESS_ANIMATION_TRANSITION_FADE_OVER;
+#    else if (strcmp (transition, "cross-fade") == 0)
+#        plugin->transition = PLY_PROGRESS_ANIMATION_TRANSITION_CROSS_FADE;
+#    else if (strcmp (transition, "merge-fade") == 0)
+#        plugin->transition = PLY_PROGRESS_ANIMATION_TRANSITION_MERGE_FADE;
