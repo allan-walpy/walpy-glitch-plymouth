@@ -46,50 +46,47 @@ debugsprite_medium = Sprite();
 
 #!_____
 fun Debug(text) {
-    debugsprite.SetImage(TextToImage (text));
+    //debugsprite.SetImage(TextToImage (text));
 }
 
 #!_____
 fun DebugBottom(text) {
-    debugsprite_bottom.SetImage(TextToImage (text));
-    debugsprite_bottom.SetPosition(0, (height - 20), 1);
+    //debugsprite_bottom.SetImage(TextToImage (text));
+    //debugsprite_bottom.SetPosition(0, (height - 20), 1);
 }
 
 #!_____
 fun DebugMedium(text) {
-    debugsprite_medium.SetImage(TextToImage (text));
-    debugsprite_medium.SetPosition(0, (height - 60), 1);
+    //debugsprite_medium.SetImage(TextToImage (text));
+    //debugsprite_medium.SetPosition(0, (height - 60), 1);
 }
 
 #! --- string manipulation --- #
 
 fun GetLength(string) {
-    for(i = 0; ; i++)
-        if (String(string).CharAt(i))
-            return i;
-    return 0;
+    i = 0;
+    while (String(string).CharAt(i)) i++;
+    return i;
 }
 
 fun StringString(string, substring) {
     start = 0;
-    while (String(string).CharAt (start)) {
-        walk = 0;
-        while (String(substring).CharAt (walk) == String(string).CharAt (start + walk) ) {
-            walk++;
-            if (!String(substring).CharAt (walk)) return start;
+    while (String(string).CharAt(start)) {
+        i=0;
+        while (String(substring).CharAt(i) == String(string).CharAt(start + i)) {
+            i++;
+            if (!String(substring).CharAt(i)) return start;
         }
         start++;
     }
-
     return NULL;
 }
 
 fun StringCopy(source, beginning, end) {
     local.destination = "";
-    for (index = beginning; ( ( (end == NULL) || (index <= end) ) && (String(source).CharAt(index)) ); index++) {
-        local.destination += String(source).CharAt(index);
+    for (i = beginning; (((end == NULL) || (i <= end)) && (String(source).CharAt(index))); i++) {
+        local.destination += String(source).CharAt(i);
     }
-
     return local.destination;
 }
 
@@ -98,9 +95,9 @@ fun StringReplace (source, pattern, replacement) {
     if (local.found == NULL)
         return source;
 
-    local.new_string = StringCopy (source, 0, local.found - 1) +
+    local.new_string = StringCopy(source, 0, local.found - 1) +
                        replacement +
-                       StringCopy (source, local.found + GetLength(pattern), NULL);
+                       StringCopy(source, local.found + GetLength(pattern), NULL);
 
     return local.new_string;
 }
@@ -116,10 +113,8 @@ fun ToInteger (str) {
     return int;
 }
 
+#! -- backgroud --- #
 
-
-
-#--------------------------------------Background functions --------------------------
 noise.image = Image ("noise-texture.png");
 
 fun draw_bg () {
@@ -140,6 +135,8 @@ fun draw_bg () {
     }
 }
 
+#! -- logo -- #
+
 fun centered_sprite(filename) {
     object.image = Image (filename);
     object.sprite = Sprite ();
@@ -154,17 +151,9 @@ fun centered_sprite(filename) {
     return object;
 }
 
-
-bits_per_pixel = Window.GetBitsPerPixel ();
-if (bits_per_pixel == 4) {
-    progress_dot_off_filename = "progress_dot_off16.png";
-    password_field_filename = "password_field16.png";
-    question_field_filename = "password_field16.png";
-} else {
-    progress_dot_off_filename = "progress_dot_off.png";
-    password_field_filename = "password_field.png";
-    question_field_filename = "password_field.png";
-}
+progress_dot_off_filename = "progress_dot_off.png";
+password_field_filename = "password_field.png";
+question_field_filename = "password_field.png";
 
 #Load the sprites
 logo = centered_sprite("ubuntu_gnome_logo.png");
@@ -341,7 +330,7 @@ fun message_callback (message)
     if (keys != NULL)
         message = StringCopy (message, keys + GetLength(local.substring), NULL);
 
-    # Get the message without the "fsckd-cancel-msg" prefix as we don't support i18n
+    # Get the message without the "fsckd-cancel-msg" prefix as we don't support i18n'
     substring = "fsckd-cancel-msg:";
     keys = StringString(message, substring);
     if (keys != NULL)
@@ -733,7 +722,7 @@ fun fsck_check (device, progress, status_string) {
         update_progress_label (progress);
     }
     else {
-        # See if there's already a slot in the queue for the device
+        # See if there's already a slot in the queue for the device'
         local.queue_device_index = queue_look_up_by_device(device);
 
         # See if the progress_label is available
@@ -952,7 +941,7 @@ Plymouth.SetDisplayQuestionFunction (display_question_callback);
 # Calling Plymouth.SetRefreshFunction with a function will set that function to be
 # called up to 50 times every second, e.g.
 #
-# NOTE: if a refresh function is not set, Plymouth doesn't seem to be able to update
+# NOTE: if a refresh function is not set, Plymouth doesn't seem to be able to update'
 #       the screen correctly
 #
 fun refresh_callback ()
