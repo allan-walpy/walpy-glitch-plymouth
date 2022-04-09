@@ -1,7 +1,7 @@
 #! --- data linkks --- #
 
-file_bg_noize = "noie.png";
-file_bg_spinner = "spinner.256px.png";
+file_bg_noize = "noise.png";
+file_bg_spinner = "spinner.png";
 file_logo = "logo.png";
 
 #! --- global vars --- #
