@@ -7,7 +7,7 @@ using SixLabors.ImageSharp.Processing;
 Console.WriteLine("Starting...");
 int width = 48;
 int height = 26;
-double glitvhiness = 0.1;
+double glitchiness = 0.1;
 ushort max_value = ushort.MaxValue / 2;
 ushort min_value = ushort.MinValue;
 Random random = new Random();
@@ -39,7 +39,7 @@ for (int i = 0; i < frames; i++)
         for (int x = 0; x < width; x++)
             for (int y = 0; y < height; y++)
             {
-                is_normal = random.NextDouble() >= glitvhiness;
+                is_normal = random.NextDouble() >= glitchiness;
                 ushort gray = Convert.ToUInt16(is_normal ? 0 : random.Next(min_value, max_value / 2));
                 image[x, y] = new Rgba64(gray, gray, gray, Convert.ToUInt16((is_normal ? 0 : random.Next(min_value, max_value + 1))));
 
@@ -55,7 +55,7 @@ for (int i = 0; i < frames; i++)
                 */
             }
         image.Mutate(x => x.Resize(options));
-        image.SaveAsPng($"try-{timestamp.ToString()}/animation-{i:0000}.png", encoder);
+        image.SaveAsPng($"frames-{timestamp.ToString()}/animation-{i:0000}.png", encoder);
     }
 }
 Console.WriteLine("Done...");

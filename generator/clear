@@ -1,3 +1,5 @@
 #!/bin/bash
 
-rm -r -f frames-*
+rm -r -f ./generator/frames-*
+rm -r -f ./generator/bin
+rm -r -f ./generator/obj
