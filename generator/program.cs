@@ -23,7 +23,7 @@ const string arg_name_color_value_max = "--color-max-value";
 const string arg_name_prefix_final = "--final-prefix-name";
 const string arg_name_prefix_initial = "--initial-prefix-name";
 const string arg_name_filename_number_pattern = "--filename-digits-pattern";
-const int default_frames = 512;
+const int default_frames = 2;
 const int default_initial_width = 96;
 const int default_initial_height = 54;
 const int default_final_width = 1920;
@@ -65,13 +65,13 @@ if (arguments.Contains(arg_name_help))
 {
     Console.WriteLine(
         args_help.Aggregate<KeyValuePair<string, string>, StringBuilder, string>(
-            new StringBuilder($"process://output {arg_name_help} --  \"\\ \n"),
-            (b, x) => b.Append($"{x.Key} && \"{x.Value} || \\ \n"),
-            (b) => b.ToString() + "\" --output end"));
+            new StringBuilder($"process://output {arg_name_help} --  \"\\ \n\n\n"),
+            (b, x) => b.Append($"{x.Key} << \"{x.Value} || \\ \n\n"),
+            (b) => b.ToString() + "\n\n\n \" --output end"));
     return;
 }
 
-Console.WriteLine(arguments.Aggregate<string, string>("process://parse --args --", (r, x) => $" {x}"));
+Console.WriteLine(arguments.Aggregate<string, string>("process://parse --args <<", (r, x) => r + $" {x}"));
 string? GetArgValue(string key) => arguments?.ElementAtOrDefault(arguments?.IndexOf(key) + 1 ?? -1);
 int GetArgValueInt(string key, int value) { int r; int.TryParse(GetArgValue(key) ?? value.ToString(), out r); return r; }
 UInt16 GetArgValueUInt16(string key, UInt16 value) { UInt16 r; UInt16.TryParse(GetArgValue(key) ?? value.ToString(), out r); return r; }
@@ -111,7 +111,7 @@ options.PremultiplyAlpha = true;
 options.Sampler = KnownResamplers.NearestNeighbor;
 options.Size = new Size(final_width, final_height);
 
-if (!do_save_final && !do_save_initial || frames == 0) throw new ApplicationException(
+if (!do_save_final && !do_save_initial || frames <= 0) throw new ApplicationException(
     "All frames opted out. Nothing to do",
     (frames <= 0) ? new Exception($"Argument \"{arg_name_frames}\" must be positive")
         : new Exception($"Argument \"{arg_name_save_final_not}\" cannot be used without \"{arg_name_save_initial}\""));
