@@ -73,23 +73,23 @@ if (arguments.Contains(arg_name_help))
 
 Console.WriteLine(arguments.Aggregate<string, string>("process://parse --args --", (r, x) => $" {x}"));
 string? GetArgValue(string key) => arguments?.ElementAtOrDefault(arguments?.IndexOf(key) + 1 ?? -1);
-int? GetArgValueInt(string key) { int result; int.TryParse(GetArgValue(key), out result); return result; }
-ushort? GetArgValueUShort(string key) { ushort result; ushort.TryParse(GetArgValue(key), out result); return result; }
-double? GetArgValueDouble(string key) { double result; double.TryParse(GetArgValue(key), out result); return result; }
+int GetArgValueInt(string key, int value) { int r; int.TryParse(GetArgValue(key) ?? value.ToString(), out r); return r; }
+UInt16 GetArgValueUInt16(string key, UInt16 value) { UInt16 r; UInt16.TryParse(GetArgValue(key) ?? value.ToString(), out r); return r; }
+double GetArgValueDouble(string key, double value) { double r; double.TryParse(GetArgValue(key) ?? value.ToString(), out r); return r; }
 
 bool is_color_version = arguments.Contains(arg_name_color);
 bool do_save_initial = arguments.Contains(arg_name_save_initial);
 bool do_save_final = !arguments.Contains(arg_name_save_final_not);
 string directory = GetArgValue(arg_name_save_folder) ?? $"frames-{DateTimeOffset.Now.ToUnixTimeSeconds()}";
-int frames = GetArgValueInt(arg_name_frames) ?? default_frames;
-int initial_width = GetArgValueInt(arg_name_initial_width) ?? default_initial_width;
-int initial_height = GetArgValueInt(arg_name_initial_height) ?? default_initial_height;
-int final_width = GetArgValueInt(arg_name_final_width) ?? default_final_width;
-int final_height = GetArgValueInt(arg_name_final_height) ?? default_final_height;
-double glitchiness = GetArgValueDouble(arg_name_glitchiness) ?? default_glitchiness;
-int index = GetArgValueInt(arg_name_start_index) ?? default_start_index;
-int color_value_min = GetArgValueUShort(arg_name_color_value_min) ?? default_color_value_min;
-int color_value_max = (GetArgValueUShort(arg_name_color_value_max) ?? default_color_value_max) + 1;
+int frames = GetArgValueInt(arg_name_frames, default_frames);
+int initial_width = GetArgValueInt(arg_name_initial_width, default_initial_width);
+int initial_height = GetArgValueInt(arg_name_initial_height, default_initial_height);
+int final_width = GetArgValueInt(arg_name_final_width, default_final_width);
+int final_height = GetArgValueInt(arg_name_final_height, default_final_height);
+double glitchiness = GetArgValueDouble(arg_name_glitchiness, default_glitchiness);
+int index = GetArgValueInt(arg_name_start_index, default_start_index);
+int color_value_min = GetArgValueUInt16(arg_name_color_value_min, default_color_value_min);
+int color_value_max = GetArgValueUInt16(arg_name_color_value_max, default_color_value_max) + 1;
 string final_prefix = GetArgValue(arg_name_prefix_final) ?? default_prefix_final;
 string initial_prefix = GetArgValue(arg_name_prefix_initial) ?? default_prefix_initial;
 string filename_digits = GetArgValue(arg_name_filename_number_pattern) ?? default_filename_number_pattern;
