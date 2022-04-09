@@ -3,5 +3,5 @@
 cd generator
 dotnet restore || (cd .. && exit 1)
 dotnet build || (cd .. && exit 2)
-dotnet run || (cd .. && exit 3)
+dotnet run -- "$@" || (cd .. && exit 3)
 cd ..
