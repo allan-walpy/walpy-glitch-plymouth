@@ -23,7 +23,7 @@ const string arg_name_color_value_max = "--color-max-value";
 const string arg_name_prefix_final = "--final-prefix-name";
 const string arg_name_prefix_initial = "--initial-prefix-name";
 const string arg_name_filename_number_pattern = "--filename-digits-pattern";
-const int default_frames = 2;
+const int default_frames = 512;
 const int default_initial_width = 96;
 const int default_initial_height = 54;
 const int default_final_width = 1920;
@@ -33,7 +33,7 @@ const int default_start_index = 0;
 const int default_color_value_min = ushort.MinValue;
 const int default_color_value_max = ushort.MaxValue / 4;
 const string default_prefix_final = "animation";
-const string default_prefix_initial = "animation-initial";
+const string default_prefix_initial = "throbber";
 const string default_filename_number_pattern = "D4";
 
 
@@ -142,11 +142,13 @@ for (int i = 0; i < frames; i++, index++)
                                 Convert.ToUInt16(random.Next(color_value_min, color_value_max)),
                                 Convert.ToUInt16(random.Next(color_value_min, color_value_max)));
             }
-        if (do_save_initial) image.SaveAsPng($"{directory}{Path.PathSeparator}{initial_prefix}-{index.ToString(filename_digits)}.png", encoder);
-        if (do_save_initial)
+        string a = Path.Combine(directory, $"{initial_prefix}-{index.ToString(filename_digits)}.png");
+        string b = Path.Combine(directory, $"{final_prefix}-{index.ToString(filename_digits)}.png");
+        if (do_save_initial) image.SaveAsPng(a, encoder);
+        if (do_save_final)
         {
             image.Mutate(x => x.Resize(options));
-            image.SaveAsPng($"{directory}{Path.PathSeparator}{final_prefix}-{string.Format(index.ToString(filename_digits))}.png", encoder);
+            image.SaveAsPng(b, encoder);
         }
     }
 }
