@@ -3,8 +3,14 @@
 Color='\033[0;33m'
 NoColor='\033[0m'
 
+# test disk scan
+for i in {1..10}
+do
+    plymouth --update=fsck:sda1:$(($i * 10))
+    sleep 0.3
+done
+
 #plymouth ask-for-password --prompt "filesystem encrypted" --dont-pause-progress
-sleep 3
 
 #for i in {1..10}
 #do

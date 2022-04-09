@@ -1,7 +1,0 @@
-#!/bin/bash
-
-for i in {1..50}
-do
-    plymouth --update=fsck:sda1:$(($i * 2))
-    sleep 0.1
-done

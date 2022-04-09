@@ -1,8 +1,5 @@
-height = Window.GetHeight(0);
-width = Window.GetWidth(0);
-
-Window.SetBackgroundTopColor(0.27, 0.27, 0.27);
-Window.SetBackgroundBottomColor(0.27, 0.27, 0.27);
+screen_height = Window.GetHeight(0);
+screen_width = Window.GetWidth(0);
 
 is_prompt_active = 0;
 
@@ -20,19 +17,19 @@ action_text_colour.red = 0.9;
 action_text_colour.green = 0.9;
 action_text_colour.blue = 1.0;
 
-fun WriteText(text, color) {
+fun WriteText (text, color) {
     return Image.Text(text, color.red, color.green, color.blue);
 }
 
-fun TextToImage(text) {
+fun TextToImage (text) {
     return WriteText (text, text_colour);
 }
 
-fun TextTintedToImage(text) {
+fun TextTintedToImage (text) {
     return  WriteText (text, tinted_text_colour);
 }
 
-fun TextActionToImage(text) {
+fun TextActionToImage (text) {
     image = WriteText (text, action_text_colour);
     return image;
 }
@@ -45,94 +42,85 @@ debugsprite_bottom = Sprite();
 debugsprite_medium = Sprite();
 
 #!_____
-fun Debug(text) {
-    //debugsprite.SetImage(TextToImage (text));
+fun Debug (text) {
+    #debugsprite.SetImage(TextToImage (text));
 }
 
 #!_____
-fun DebugBottom(text) {
-    //debugsprite_bottom.SetImage(TextToImage (text));
-    //debugsprite_bottom.SetPosition(0, (height - 20), 1);
+fun DebugBottom (text) {
+    #debugsprite_bottom.SetImage(TextToImage (text));
+    #debugsprite_bottom.SetPosition(0, (screen_height - 20), 1);
 }
 
 #!_____
-fun DebugMedium(text) {
-    //debugsprite_medium.SetImage(TextToImage (text));
-    //debugsprite_medium.SetPosition(0, (height - 60), 1);
+fun DebugMedium (text) {
+    #debugsprite_medium.SetImage(TextToImage (text));
+    #debugsprite_medium.SetPosition(0, (screen_height - 60), 1);
 }
 
 #! --- string manipulation --- #
 
-fun GetLength(string) {
+fun GetSubPosition (s, sub) {
+    for (start = 0; String(s).CharAt(start); start++) {
+        i = 0;
+        while (String(sub).CharAt(i) == String(s).CharAt(start + i)) {
+            i++;
+            if (!String(sub).CharAt(i)) return start;
+        }
+    }
+    return NULL;
+}
+
+fun GetLength (string) {
     i = 0;
     while (String(string).CharAt(i)) i++;
     return i;
 }
 
-fun StringString(string, substring) {
-    start = 0;
-    while (String(string).CharAt(start)) {
-        i=0;
-        while (String(substring).CharAt(i) == String(string).CharAt(start + i)) {
-            i++;
-            if (!String(substring).CharAt(i)) return start;
-        }
-        start++;
+fun Copy (source, beginning, end) {
+    result = "";
+    for (i = beginning; (((end == NULL) || (i <= end)) && (String(source).CharAt(i))); i++) {
+        result += String(source).CharAt(i);
     }
-    return NULL;
-}
-
-fun StringCopy(source, beginning, end) {
-    local.destination = "";
-    for (i = beginning; (((end == NULL) || (i <= end)) && (String(source).CharAt(index))); i++) {
-        local.destination += String(source).CharAt(i);
-    }
-    return local.destination;
+    return result;
 }
 
 fun StringReplace (source, pattern, replacement) {
-    local.found = StringString(source, pattern);
-    if (local.found == NULL)
-        return source;
+    i = GetSubPosition(source, pattern);
+    if (i == NULL) return source;
 
-    local.new_string = StringCopy(source, 0, local.found - 1) +
-                       replacement +
-                       StringCopy(source, local.found + GetLength(pattern), NULL);
-
-    return local.new_string;
+    return Copy(source, 0, i - 1) + replacement + Copy(source, i + GetLength(pattern), NULL);
 }
 
 fun ToInteger (str) {
-    int = -1;
-    for (i=0; i<=100; i++) {
-        if (i+"" == str) {
-            int = i;
-            break;
-        }
-    }
-    return int;
+    for (i = 0; i <= 256; i++)
+        if (i+"" == str) return i;
+    return -1;
 }
 
 #! -- backgroud --- #
 
-noise.image = Image ("noise-texture.png");
+Window.SetBackgroundTopColor(0.27, 0.27, 0.27);
+Window.SetBackgroundBottomColor(0.27, 0.27, 0.27);
+
+backgroud_z = -10;
+
+noise.image = Image ("noise.png");
 
 fun draw_bg () {
-    noise.i = 0;
-    noise.j = 0;
+    width = noise.image.GetWidth();
+    height = noise.image.GetHeight();
+    z = backgroud_z + 1;
 
-    while (noise.j*256 < height) {
-        while (noise.i*256 < width) {
-            noise.sprite[noise.i][noise.j] = Sprite ();
-            noise.sprite[noise.i][noise.j].SetImage (noise.image);
-            noise.sprite[noise.i][noise.j].SetX (noise.i*256);
-            noise.sprite[noise.i][noise.j].SetY (noise.j*256);
-            noise.sprite[noise.i][noise.j].SetZ (-1000);
-            noise.i++;
+    for (x = 0; x * width < screen_width; x++)
+        for (y = 0; y * height < screen_height; y++)
+        {
+            noise.sprite[x][y] = Sprite();
+            noise.sprite[x][y].SetImage(noise.image);
+            noise.sprite[x][y].SetX(x * width);
+            noise.sprite[x][y].SetY(y * height);
+            noise.sprite[x][y].SetZ(z);
         }
-        noise.i = 0;
-        noise.j++;
-    }
 }
 
 #! -- logo -- #
@@ -143,8 +131,8 @@ fun centered_sprite(filename) {
     object.sprite.SetImage (object.image);
     object.width = object.image.GetWidth ();
     object.height = object.image.GetHeight ();
-    object.x = Window.GetX () + width / 2 - object.width  / 2;
-    object.y = Window.GetY () + height / 2 - object.height;
+    object.x = Window.GetX () + screen_width / 2 - object.width  / 2;
+    object.y = Window.GetY () + screen_height / 2 - object.height;
     object.sprite.SetX (object.x);
     object.sprite.SetY (object.y);
 
@@ -155,8 +143,7 @@ progress_dot_off_filename = "progress_dot_off.png";
 password_field_filename = "password_field.png";
 question_field_filename = "password_field.png";
 
-#Load the sprites
-logo = centered_sprite("ubuntu_gnome_logo.png");
+logo = centered_sprite("logo.png");
 spinner = centered_sprite("spinner.png");
 draw_bg();
 
@@ -224,7 +211,7 @@ fun get_message_label (label, is_fake, is_action_line) {
     message_label.height = message_image.GetHeight ();
 
     # Center the line horizontally
-    message_label.x = Window.GetX () + width / 2 - message_label.width / 2;
+    message_label.x = Window.GetX () + screen_width / 2 - message_label.width / 2;
 
     message_label.y = logo.y + logo.height + logo_spacing;
 
@@ -259,7 +246,7 @@ fun get_fsck_label (label, is_fake) {
     fsck_label.height = fsck_label.image.GetHeight ();
 
     # Centre the label horizontally
-    fsck_label.x = Window.GetX () + width / 2 - fsck_label.width / 2;
+    fsck_label.x = Window.GetX () + screen_width / 2 - fsck_label.width / 2;
 
     local.first_label = get_message_label (label, 1, 0);
 
@@ -321,20 +308,20 @@ fun message_callback (message)
     local.substring = "keys:";
 
     # Look for the "keys:" prefix
-    local.keys = StringString(message, local.substring);
+    local.keys = GetSubPosition(message, local.substring);
 
     local.is_action_line = (keys != NULL);
     Debug("keys " + local.keys + " substring length = " + GetLength(local.substring));
 
     # Get the message without the "keys:" prefix
     if (keys != NULL)
-        message = StringCopy (message, keys + GetLength(local.substring), NULL);
+        message = Copy (message, keys + GetLength(local.substring), NULL);
 
     # Get the message without the "fsckd-cancel-msg" prefix as we don't support i18n'
     substring = "fsckd-cancel-msg:";
-    keys = StringString(message, substring);
+    keys = GetSubPosition(message, substring);
     if (keys != NULL)
-        message = StringCopy(message, keys + GetLength(substring), NULL);
+        message = Copy(message, keys + GetLength(substring), NULL);
 
     local.label.is_fake = is_fake;
     label = get_message_label(message, is_fake, is_action_line);
@@ -374,7 +361,7 @@ fun password_dialogue_setup (message_label) {
     entry.sprite.SetImage (entry.image);
 
     # Centre the box horizontally
-    entry.x = Window.GetX () + width / 2 - entry.image.GetWidth () / 2;
+    entry.x = Window.GetX () + screen_width / 2 - entry.image.GetWidth () / 2;
 
     # Put the entry below the second label.
     entry.y = message_notification[2].y + label.height;
@@ -422,7 +409,7 @@ fun display_password_callback (prompt, bullets) {
     spaces = Math.Int( (password_dialogue.entry.image.GetWidth () - (margin * 2) ) / (2 * bullet_width / 3) );
     Debug ("spaces = " + spaces + ", bullets = " + bullets);
     bullets_area.width = margin + spaces * (2 * bullet_width / 3);
-    bullets_area.x = Window.GetX () + width / 2 - bullets_area.width / 2;
+    bullets_area.x = Window.GetX () + screen_width / 2 - bullets_area.width / 2;
     DebugBottom ("pwd_entry x = " + password_dialogue.entry.x + ", bullets_area.x = " + bullets_area.x + ", bullets_area.width = " + bullets_area.width);
     if (bullets > spaces)
         bullets = spaces;
@@ -893,7 +880,7 @@ fun question_dialogue_setup (message_label, text_image) {
     field.sprite.SetImage (field.image);
 
     # Centre the box horizontally
-    field.x = Window.GetX () + width / 2 - field.image.GetWidth () / 2;
+    field.x = Window.GetX () + screen_width / 2 - field.image.GetWidth () / 2;
     content_x = field.x + margin;
 
     # Put the field below the second label.
@@ -927,7 +914,7 @@ fun display_question_callback (prompt, contents) {
     margin = global.question_dialogue.margin;
     fieldWidth = global.question_dialogue.field.image.GetWidth ();
     for (i = 0; ( (textImage.GetWidth () + 2 * margin) > fieldWidth); i++) {
-        textImage = TextToImage(StringCopy (contents, i, GetLength (contents)));
+        textImage = TextToImage(Copy (contents, i, GetLength (contents)));
     }
 
     global.question_dialogue.content.SetImage (textImage);
