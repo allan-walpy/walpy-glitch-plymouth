@@ -39,6 +39,3 @@ exit 0
 #        plugin->transition = PLY_PROGRESS_ANIMATION_TRANSITION_CROSS_FADE;
 #    else if (strcmp (transition, "merge-fade") == 0)
 #        plugin->transition = PLY_PROGRESS_ANIMATION_TRANSITION_MERGE_FADE;
-
-#Font=Ubuntu 24
-#TitleFont=Ubuntu Light 30
