@@ -158,7 +158,7 @@ fun place_sprite(ref, x, y)
     ref.sprite.SetY(y);
 }
 
-spinner = create_sprite("spinner.png");
+spinner = create_sprite("spinner.256px.png");
 place_sprite(spinner, get_center_x(spinner.width), get_center_y(spinner.height));
 
 logo = create_sprite("logo.png");
