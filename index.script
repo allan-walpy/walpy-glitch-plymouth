@@ -4,11 +4,6 @@ width = Window.GetWidth(0);
 Window.SetBackgroundTopColor(0.27, 0.27, 0.27);
 Window.SetBackgroundBottomColor(0.27, 0.27, 0.27);
 
-#!_____
-debugsprite = Sprite();
-debugsprite_bottom = Sprite();
-debugsprite_medium = Sprite();
-
 is_prompt_active = 0;
 
 #! --- text output --- #
@@ -25,45 +20,29 @@ action_text_colour.red = 0.9;
 action_text_colour.green = 0.9;
 action_text_colour.blue = 1.0;
 
-fun WriteText (text, color) {
+fun WriteText(text, color) {
     return Image.Text(text, color.red, color.green, color.blue);
 }
 
-fun TextToImage (text) {
+fun TextToImage(text) {
     return WriteText (text, text_colour);
 }
 
-fun TextTintedToImage (text) {
+fun TextTintedToImage(text) {
     return  WriteText (text, tinted_text_colour);
 }
 
-fun TextActionToImage (text) {
+fun TextActionToImage(text) {
     image = WriteText (text, action_text_colour);
     return image;
 }
 
-#! --- string manipulation --- #
+#! --- debug --- #
 
-fun GetLength (string) {
-    index = 0;
-    while (String(string).CharAt(index)) index++;
-    return index;
-}
-
-fun StringString(string, substring) {
-    start = 0;
-    while (String(string).CharAt (start)) {
-        walk = 0;
-        while (String(substring).CharAt (walk) == String(string).CharAt (start + walk) ) {
-            walk++;
-            if (!String(substring).CharAt (walk)) return start;
-        }
-        start++;
-    }
-
-    return NULL;
-}
-
+#!_____
+debugsprite = Sprite();
+debugsprite_bottom = Sprite();
+debugsprite_medium = Sprite();
 
 #!_____
 fun Debug(text) {
@@ -82,7 +61,30 @@ fun DebugMedium(text) {
     debugsprite_medium.SetPosition(0, (height - 60), 1);
 }
 
-fun StringCopy (source, beginning, end) {
+#! --- string manipulation --- #
+
+fun GetLength(string) {
+    for(i = 0; ; i++)
+        if (String(string).CharAt(i))
+            return i;
+    return 0;
+}
+
+fun StringString(string, substring) {
+    start = 0;
+    while (String(string).CharAt (start)) {
+        walk = 0;
+        while (String(substring).CharAt (walk) == String(string).CharAt (start + walk) ) {
+            walk++;
+            if (!String(substring).CharAt (walk)) return start;
+        }
+        start++;
+    }
+
+    return NULL;
+}
+
+fun StringCopy(source, beginning, end) {
     local.destination = "";
     for (index = beginning; ( ( (end == NULL) || (index <= end) ) && (String(source).CharAt(index)) ); index++) {
         local.destination += String(source).CharAt(index);
@@ -103,9 +105,7 @@ fun StringReplace (source, pattern, replacement) {
     return local.new_string;
 }
 
-# it makes sense to use it only for
-# numbers up to 100
-fun StringToInteger (str) {
+fun ToInteger (str) {
     int = -1;
     for (i=0; i<=100; i++) {
         if (i+"" == str) {
@@ -115,6 +115,7 @@ fun StringToInteger (str) {
     }
     return int;
 }
+
 
 
 
@@ -181,9 +182,6 @@ fsck_notification.image = TextActionToImage ("");
 
 status = "normal";
 
-# use a fixed string with ascending and descending stems to calibrate the
-# bounding box for the first message, so the messages below don't move up
-# and down according to *their* height.
 first_line_height = TextTintedToImage("MY282HRiQfjCKf57").GetHeight();
 
 fun draw_logo () {
@@ -836,7 +834,7 @@ fun update_status_callback (status) {
             status_string[0] = "Checking disk %1$d of %2$d (%3$d %% complete)";
 
         if ((device != "") && (progress != "")) {
-            progress = StringToInteger (progress);
+            progress = ToInteger (progress);
 
             # Make sure that the fsck_queue is initialised
             if (!global.fsck_queue)
@@ -857,7 +855,7 @@ fun update_status_callback (status) {
 
     # systemd-fsckd pass fsckd:<number_devices>:<progress>:<l10n_string>
     if (update_strings[0] == "fsckd") {
-        number_devices = StringToInteger(update_strings[1]);
+        number_devices = ToInteger(update_strings[1]);
 
         if (number_devices > 0) {
             label = update_strings[3];
