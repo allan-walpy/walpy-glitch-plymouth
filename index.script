@@ -1,3 +1,11 @@
+#! --- data linkks --- #
+
+file_bg_noize = "noie.png";
+file_bg_spinner = "spinner.256px.png";
+file_logo = "logo.png";
+
+#! --- global vars --- #
+
 screen_width = Window.GetWidth(0);
 screen_height = Window.GetHeight(0);
 screen_x = Window.GetX();
@@ -107,7 +115,7 @@ Window.SetBackgroundBottomColor(0.27, 0.27, 0.27);
 
 backgroud_z = -10;
 
-noise.image = Image ("noise.png");
+noise.image = Image (file_bg_noize);
 
 fun place_noize () {
     width = noise.image.GetWidth();
@@ -141,12 +149,17 @@ fun get_bottom(height) {
     return screen_y + screen_height - height;
 }
 
-fun create_sprite(filename) {
+fun get_top(height) {
+    return screen_y;
+}
+
+fun create_sprite(filename, z) {
     object.image = Image(filename);
     object.sprite = Sprite();
     object.sprite.SetImage(object.image);
     object.width = object.image.GetWidth();
-    object.height = object.image.GetHeight() || 500;
+    object.height = object.image.GetHeight();
+    object.z = z;
     return object;
 }
 
@@ -158,18 +171,16 @@ fun place_sprite(ref, x, y)
     ref.sprite.SetY(y);
 }
 
-spinner = create_sprite("spinner.256px.png");
-place_sprite(spinner, get_center_x(spinner.width), get_center_y(spinner.height));
+spinner = create_sprite(file_bg_spinner, backgroud_z + 2);
+place_sprite(spinner, get_center_x(spinner.width), get_top(spinner.height) + spinner.height / 2);
 
-logo = create_sprite("logo.png");
+logo = create_sprite(file_logo, backgroud_z + 1);
 place_sprite(logo, get_center_x(logo.width), get_bottom(logo.height) - 100);
 
 
 progress_dot_off_filename = "progress_dot_off.png";
 password_field_filename = "password_field.png";
 question_field_filename = "password_field.png";
-
-
 
 spinner.rot.steps = 50;
 spinner.rot.delay = 0.05;
@@ -181,10 +192,11 @@ message_notification[1].image = TextTintedToImage ("");
 fsck_notification.image = TextActionToImage ("");
 
 status = "normal";
+sample_password = "MY282HRiQfjCKf57";
 
-first_line_height = TextTintedToImage("MY282HRiQfjCKf57").GetHeight();
+first_line_height = TextTintedToImage(sample_password).GetHeight();
 
-fun draw_logo () {
+fun redraw_logo () {
     logo.sprite.SetX(logo.x);
     logo.sprite.SetY(logo.y);
     logo.sprite.SetZ(logo.z);
@@ -196,7 +208,7 @@ fun rotate_spinner () {
         global.spinner_step = 0;
     }
 
-    global.spinner_step++;
+    global.spinner_step--;
     position = global.spinner_step * (6.28319 / spinner.rot.steps); # rotate 2pi/steps
     spinner.sprite.SetImage(spinner.image.Rotate (position));
 }
@@ -957,7 +969,7 @@ Plymouth.SetDisplayQuestionFunction (display_question_callback);
 #
 fun refresh_callback ()
 {
-    draw_logo ();
+    redraw_logo ();
 }
 Plymouth.SetRefreshFunction (refresh_callback);
 
