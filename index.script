@@ -1,5 +1,7 @@
-screen_height = Window.GetHeight(0);
 screen_width = Window.GetWidth(0);
+screen_height = Window.GetHeight(0);
+screen_x = Window.GetX();
+screen_y = Window.GetY();
 
 is_prompt_active = 0;
 
@@ -43,19 +45,19 @@ debugsprite_medium = Sprite();
 
 #!_____
 fun Debug (text) {
-    #debugsprite.SetImage(TextToImage (text));
+    debugsprite.SetImage(TextToImage (text));
 }
 
 #!_____
 fun DebugBottom (text) {
-    #debugsprite_bottom.SetImage(TextToImage (text));
-    #debugsprite_bottom.SetPosition(0, (screen_height - 20), 1);
+    debugsprite_bottom.SetImage(TextToImage (text));
+    debugsprite_bottom.SetPosition(0, (screen_height - 20), 1);
 }
 
 #!_____
 fun DebugMedium (text) {
-    #debugsprite_medium.SetImage(TextToImage (text));
-    #debugsprite_medium.SetPosition(0, (screen_height - 60), 1);
+    debugsprite_medium.SetImage(TextToImage (text));
+    debugsprite_medium.SetPosition(0, (screen_height - 60), 1);
 }
 
 #! --- string manipulation --- #
@@ -107,7 +109,7 @@ backgroud_z = -10;
 
 noise.image = Image ("noise.png");
 
-fun draw_bg () {
+fun place_noize () {
     width = noise.image.GetWidth();
     height = noise.image.GetHeight();
     z = backgroud_z + 1;
@@ -125,27 +127,46 @@ fun draw_bg () {
 
 #! -- logo -- #
 
-fun centered_sprite(filename) {
-    object.image = Image (filename);
-    object.sprite = Sprite ();
-    object.sprite.SetImage (object.image);
-    object.width = object.image.GetWidth ();
-    object.height = object.image.GetHeight ();
-    object.x = Window.GetX () + screen_width / 2 - object.width  / 2;
-    object.y = Window.GetY () + screen_height / 2 - object.height;
-    object.sprite.SetX (object.x);
-    object.sprite.SetY (object.y);
+fun get_center_x(width) {
+    return screen_x + screen_width / 2 - width / 2;
+}
 
+fun get_center_y(height) {
+    return screen_y + screen_height / 2 - height / 2;
+}
+
+fun get_bottom(height) {
+    return screen_y + screen_height - height;
+}
+
+fun create_sprite(filename) {
+    object.image = Image(filename);
+    object.sprite = Sprite();
+    object.sprite.SetImage(object.image);
+    object.width = object.image.GetWidth();
+    object.height = object.image.GetHeight() || 500;
     return object;
 }
+
+spinner = create_sprite("spinner.png");
+spinner.x = get_center_x(spinner.width);
+spinner.y = get_center_y(spinner.height);
+spinner.sprite.SetX(spinner.x);
+spinner.sprite.SetY(spinner.y);
+
+logo = create_sprite("logo.png");
+logo.x = get_center_x(logo.width);
+logo.y = get_bottom(logo.height) - 100;
+logo.sprite.SetX(logo.x);
+logo.sprite.SetY(logo.y);
+
+place_noize();
 
 progress_dot_off_filename = "progress_dot_off.png";
 password_field_filename = "password_field.png";
 question_field_filename = "password_field.png";
 
-logo = centered_sprite("logo.png");
-spinner = centered_sprite("spinner.png");
-draw_bg();
+
 
 spinner.rot.steps = 50;
 spinner.rot.delay = 0.05;
@@ -211,7 +232,7 @@ fun get_message_label (label, is_fake, is_action_line) {
     message_label.height = message_image.GetHeight ();
 
     # Center the line horizontally
-    message_label.x = Window.GetX () + screen_width / 2 - message_label.width / 2;
+    message_label.x = screen_x + screen_width / 2 - message_label.width / 2;
 
     message_label.y = logo.y + logo.height + logo_spacing;
 
@@ -246,7 +267,7 @@ fun get_fsck_label (label, is_fake) {
     fsck_label.height = fsck_label.image.GetHeight ();
 
     # Centre the label horizontally
-    fsck_label.x = Window.GetX () + screen_width / 2 - fsck_label.width / 2;
+    fsck_label.x = screen_x  + screen_width / 2 - fsck_label.width / 2;
 
     local.first_label = get_message_label (label, 1, 0);
 
@@ -361,7 +382,7 @@ fun password_dialogue_setup (message_label) {
     entry.sprite.SetImage (entry.image);
 
     # Centre the box horizontally
-    entry.x = Window.GetX () + screen_width / 2 - entry.image.GetWidth () / 2;
+    entry.x = screen_x + screen_width / 2 - entry.image.GetWidth () / 2;
 
     # Put the entry below the second label.
     entry.y = message_notification[2].y + label.height;
@@ -409,7 +430,7 @@ fun display_password_callback (prompt, bullets) {
     spaces = Math.Int( (password_dialogue.entry.image.GetWidth () - (margin * 2) ) / (2 * bullet_width / 3) );
     Debug ("spaces = " + spaces + ", bullets = " + bullets);
     bullets_area.width = margin + spaces * (2 * bullet_width / 3);
-    bullets_area.x = Window.GetX () + screen_width / 2 - bullets_area.width / 2;
+    bullets_area.x = screen_x + screen_width / 2 - bullets_area.width / 2;
     DebugBottom ("pwd_entry x = " + password_dialogue.entry.x + ", bullets_area.x = " + bullets_area.x + ", bullets_area.width = " + bullets_area.width);
     if (bullets > spaces)
         bullets = spaces;
@@ -880,7 +901,7 @@ fun question_dialogue_setup (message_label, text_image) {
     field.sprite.SetImage (field.image);
 
     # Centre the box horizontally
-    field.x = Window.GetX () + screen_width / 2 - field.image.GetWidth () / 2;
+    field.x = screen_x + screen_width / 2 - field.image.GetWidth () / 2;
     content_x = field.x + margin;
 
     # Put the field below the second label.
