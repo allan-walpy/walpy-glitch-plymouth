@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
@@ -8,61 +6,100 @@ using SixLabors.ImageSharp.Processing;
 
 //! --- data setting ---
 
-const string arg_help_name = "--help";
-const string arg_save_folder_name = "--folder";
-const string arg_color_name = "--with-color";
-const string arg_save_initial_image_name = "--with-initial-image";
+const string arg_name_help = "--help";
+const string arg_name_save_folder = "--folder";
+const string arg_name_color = "--with-color";
+const string arg_name_save_initial = "--with-initial-frame";
+const string arg_name_save_final_not = "--no-final-frame";
+const string arg_name_frames = "--frames";
+const string arg_name_initial_width = "--width-initial";
+const string arg_name_initial_height = "--height-initial";
+const string arg_name_final_width = "--width-final";
+const string arg_name_final_height = "--height-final";
+const string arg_name_glitchiness = "--glitch";
+const string arg_name_start_index = " --index";
+const string arg_name_color_value_min = "--color-min-value";
+const string arg_name_color_value_max = "--color-max-value";
+const string arg_name_prefix_final = "--final-prefix-name";
+const string arg_name_prefix_initial = "--initial-prefix-name";
+const string arg_name_filename_number_pattern = "--filename-digits-pattern";
+const int default_frames = 512;
+const int default_initial_width = 96;
+const int default_initial_height = 54;
+const int default_final_width = 1920;
+const int default_final_height = 1080;
+const double default_glitchiness = 0.1;
+const int default_start_index = 0;
+const int default_color_value_min = ushort.MinValue;
+const int default_color_value_max = ushort.MaxValue / 4;
+const string default_prefix_final = "animation";
+const string default_prefix_initial = "animation-initial";
+const string default_filename_number_pattern = "D4";
 
-
-
-const int initial_width = 48;
-const int initial_height = 26;
-const int final_width = 1920;
-const int final_height = 1080;
-const double glitchiness = 0.1;
-const int color_min_value = ushort.MinValue;
-const int color_max_value = ushort.MaxValue / 4;
-
-
-
-
-const int frames = 2;
 
 Dictionary<string, string> args_help = new Dictionary<string, string> {
-    { arg_help_name, "this ⇓" },
-    { arg_color_name, "make glitches colorfull" },
-    { arg_save_folder_name, $"specifiy folder name --default \"frames-{{unix-timestamp}}" },
-    { arg_save_initial_image_name, "make saves of original not scaled generated images "}
+    { arg_name_help, "this ⇓" },
+    { arg_name_color, "make glitches colorfull" },
+    { arg_name_save_folder, $"specifiy folder name --default \"frames-{{\\unix-timestamp-{DateTime.Now.Second}\\}}" },
+    { arg_name_save_initial, "make saves of original not scaled generated images "},
+    { arg_name_save_final_not, $"do not resize and saves final image --warrning \"{arg_name_save_initial}\" must be used "},
+    { arg_name_frames, $"specify amount of generated frames --default {default_frames}" },
+    { arg_name_initial_width, $"specify width of originaly generated image --default {default_initial_width}"},
+    { arg_name_initial_height, $"specify height of originaly generated image --default {default_initial_height}"},
+    { arg_name_final_width, $"specify width of final image --default {default_final_width}"},
+    { arg_name_final_height, $"specify height of final image --default {default_final_height}"},
+    { arg_name_glitchiness, $"specify how often glitchy occurs from 0 to 1 --default {default_glitchiness}"},
+    { arg_name_start_index, $"specify from which index frame naming starts --default {default_start_index}"},
+    { arg_name_color_value_min, $"minimal color brightness from {ushort.MinValue} to {ushort.MaxValue} --default {default_color_value_min}" },
+    { arg_name_color_value_max, $"maximum color brightness from {ushort.MinValue} to {ushort.MaxValue} --default {default_color_value_max}"},
+    { arg_name_prefix_final, $"filename prefix for final images --default {default_prefix_final}"},
+    { arg_name_prefix_initial, $"filename prefix for initialy generated images --default {default_prefix_initial}"},
+    { arg_name_filename_number_pattern, $"number pattern in filename --default {default_filename_number_pattern}"}
 };
 
 //! --- arguments parsing ---
 
 var arguments = args.ToList(); arguments.RemoveAt(-1);
-Console.WriteLine(arguments.Aggregate<string, string>("process://parse --args --", (r, x) => $" {x}"));
 
-if (arguments.Contains(arg_help_name))
+if (arguments.Contains(arg_name_help))
 {
     Console.WriteLine(
         args_help.Aggregate<KeyValuePair<string, string>, StringBuilder, string>(
-            new StringBuilder($"process://output {arg_help_name} --  \"\\ \n"),
+            new StringBuilder($"process://output {arg_name_help} --  \"\\ \n"),
             (b, x) => b.Append($"{x.Key} && \"{x.Value} || \\ \n"),
             (b) => b.ToString() + "\" --output end"));
     return;
 }
 
+Console.WriteLine(arguments.Aggregate<string, string>("process://parse --args --", (r, x) => $" {x}"));
+string? GetArgValue(string key) => arguments?.ElementAtOrDefault(arguments?.IndexOf(key) + 1 ?? -1);
+int? GetArgValueInt(string key) { int result; int.TryParse(GetArgValue(key), out result); return result; }
+ushort? GetArgValueUShort(string key) { ushort result; ushort.TryParse(GetArgValue(key), out result); return result; }
+double? GetArgValueDouble(string key) { double result; double.TryParse(GetArgValue(key), out result); return result; }
 
-bool is_color_version = arguments.Contains(arg_color_name);
-bool do_save_initial_frame = arguments.Contains(arg_save_initial_image_name);
-string directory = arguments.ElementAtOrDefault(arguments.IndexOf( arg_save_folder_name))
-    ?? $"frames-{DateTimeOffset.Now.ToUnixTimeSeconds()}";
-
+bool is_color_version = arguments.Contains(arg_name_color);
+bool do_save_initial = arguments.Contains(arg_name_save_initial);
+bool do_save_final = !arguments.Contains(arg_name_save_final_not);
+string directory = GetArgValue(arg_name_save_folder) ?? $"frames-{DateTimeOffset.Now.ToUnixTimeSeconds()}";
+int frames = GetArgValueInt(arg_name_frames) ?? default_frames;
+int initial_width = GetArgValueInt(arg_name_initial_width) ?? default_initial_width;
+int initial_height = GetArgValueInt(arg_name_initial_height) ?? default_initial_height;
+int final_width = GetArgValueInt(arg_name_final_width) ?? default_final_width;
+int final_height = GetArgValueInt(arg_name_final_height) ?? default_final_height;
+double glitchiness = GetArgValueDouble(arg_name_glitchiness) ?? default_glitchiness;
+int index = GetArgValueInt(arg_name_start_index) ?? default_start_index;
+int color_value_min = GetArgValueUShort(arg_name_color_value_min) ?? default_color_value_min;
+int color_value_max = (GetArgValueUShort(arg_name_color_value_max) ?? default_color_value_max) + 1;
+string final_prefix = GetArgValue(arg_name_prefix_final) ?? default_prefix_final;
+string initial_prefix = GetArgValue(arg_name_prefix_initial) ?? default_prefix_initial;
+string filename_digits = GetArgValue(arg_name_filename_number_pattern) ?? default_filename_number_pattern;
 
 Console.WriteLine("process://start");
 
 var encoder = new PngEncoder();
 encoder.BitDepth = PngBitDepth.Bit16;
 encoder.ChunkFilter = PngChunkFilter.None;
-encoder.CompressionLevel = PngCompressionLevel.BestCompression; //NoCompression;
+encoder.CompressionLevel = PngCompressionLevel.BestCompression;
 encoder.ColorType = PngColorType.RgbWithAlpha;
 encoder.FilterMethod = PngFilterMethod.None;
 encoder.InterlaceMethod = PngInterlaceMode.Adam7;
@@ -74,38 +111,42 @@ options.PremultiplyAlpha = true;
 options.Sampler = KnownResamplers.NearestNeighbor;
 options.Size = new Size(final_width, final_height);
 
-System.IO.Directory.CreateDirectory(directory);
+if (!do_save_final && !do_save_initial) throw new ApplicationException(
+    "All images opted out from save. Nothing to do",
+    new Exception($"Argument \"{arg_name_save_final_not}\" cannot be used without \"{arg_name_save_initial}\""));
 
+Console.WriteLine("process://start");
+System.IO.Directory.CreateDirectory(directory);
 bool is_normal = false;
+ushort gray = 0;
 Random random = new Random();
 
-for (int i = 0; i < frames; i++)
+for (int i = 0; i < frames; i++, index++)
 {
     if (frames < 32 || i % (frames / 32) == 0) Console.WriteLine($"process://frame --number #{i}");
     using (Image<Rgba64> image = new Image<Rgba64>(initial_width, initial_height))
     {
-
         for (int x = 0; x < initial_width; x++)
             for (int y = 0; y < initial_height; y++)
             {
                 is_normal = random.NextDouble() >= glitchiness;
-
-
-                ushort gray = Convert.ToUInt16(is_normal ? 0 : random.Next(color_min_value, color_max_value));
-                image[x, y] =
-                    is_color_version ?
-                        new Rgba64(gray, gray, gray, Convert.ToUInt16((is_normal ? 0 : random.Next(color_min_value, color_max_value + 1)))) :
+                if (is_color_version && !is_normal) gray = Convert.ToUInt16(is_normal ? 0 : random.Next(color_value_min, color_value_max));
+                image[x, y] = is_color_version ?
+                        new Rgba64(gray, gray, gray, Convert.ToUInt16((is_normal ? 0 : random.Next(color_value_min, color_value_max + 1)))) :
                         is_normal ?
                             new Rgba64(0, 0, 0, 0) :
                             new Rgba64(
-                                Convert.ToUInt16(random.Next(color_min_value, color_max_value)),
-                                Convert.ToUInt16(random.Next(color_min_value, color_max_value)),
-                                Convert.ToUInt16(random.Next(color_min_value, color_max_value)),
-                                Convert.ToUInt16(random.Next(color_min_value, color_max_value)));
+                                Convert.ToUInt16(random.Next(color_value_min, color_value_max)),
+                                Convert.ToUInt16(random.Next(color_value_min, color_value_max)),
+                                Convert.ToUInt16(random.Next(color_value_min, color_value_max)),
+                                Convert.ToUInt16(random.Next(color_value_min, color_value_max)));
             }
-        if (do_save_initial_frame) image.SaveAsPng($"{directory}{Path.PathSeparator}animation-initial-{i:D4}.png", encoder);
-        image.Mutate(x => x.Resize(options));
-        image.SaveAsPng($"{directory}{Path.PathSeparator}animation-{i:D4}.png", encoder);
+        if (do_save_initial) image.SaveAsPng($"{directory}{Path.PathSeparator}{initial_prefix}-{index.ToString(filename_digits)}.png", encoder);
+        if (do_save_initial)
+        {
+            image.Mutate(x => x.Resize(options));
+            image.SaveAsPng($"{directory}{Path.PathSeparator}{final_prefix}-{string.Format(index.ToString(filename_digits))}.png", encoder);
+        }
     }
 }
-Console.WriteLine("Done...");
+Console.WriteLine("process://shutdown");
