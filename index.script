@@ -125,6 +125,8 @@ fun place_noize () {
         }
 }
 
+place_noize();
+
 #! -- logo -- #
 
 fun get_center_x(width) {
@@ -148,19 +150,20 @@ fun create_sprite(filename) {
     return object;
 }
 
+fun place_sprite(ref, x, y)
+{
+    ref.x = x;
+    ref.y = y;
+    ref.sprite.SetX(x);
+    ref.sprite.SetY(y);
+}
+
 spinner = create_sprite("spinner.png");
-spinner.x = get_center_x(spinner.width);
-spinner.y = get_center_y(spinner.height);
-spinner.sprite.SetX(spinner.x);
-spinner.sprite.SetY(spinner.y);
+place_sprite(spinner, get_center_x(spinner.width), get_center_y(spinner.height));
 
 logo = create_sprite("logo.png");
-logo.x = get_center_x(logo.width);
-logo.y = get_bottom(logo.height) - 100;
-logo.sprite.SetX(logo.x);
-logo.sprite.SetY(logo.y);
+place_sprite(logo, get_center_x(logo.width), get_bottom(logo.height) - 100);
 
-place_noize();
 
 progress_dot_off_filename = "progress_dot_off.png";
 password_field_filename = "password_field.png";
