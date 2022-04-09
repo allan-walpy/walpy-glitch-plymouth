@@ -171,19 +171,27 @@ fun place_sprite(ref, x, y)
     ref.sprite.SetY(y);
 }
 
-spinner = create_sprite(file_bg_spinner, backgroud_z + 2);
-place_sprite(spinner, get_center_x(spinner.width), get_top(spinner.height) + spinner.height / 2);
-
 logo = create_sprite(file_logo, backgroud_z + 1);
 place_sprite(logo, get_center_x(logo.width), get_bottom(logo.height) - 100);
+
+spinner = create_sprite(file_bg_spinner, backgroud_z + 2);
+place_sprite(spinner, get_center_x(spinner.width), get_top(spinner.height) + spinner.height / 2);
+spinner.rotation.steps = 60;
+spinner.rotation.delay = 0.02;
+spinner_step = 0;
+
+fun rotate_spinner () {
+    spinner_step--;
+    position = spinner_step * (6.283185 / spinner.rotation.steps);
+    spinner.sprite.SetImage(spinner.image.Rotate (position));
+}
+
 
 
 progress_dot_off_filename = "progress_dot_off.png";
 password_field_filename = "password_field.png";
 question_field_filename = "password_field.png";
 
-spinner.rot.steps = 50;
-spinner.rot.delay = 0.05;
 
 logo_spacing = logo.height;
 
@@ -203,15 +211,6 @@ fun redraw_logo () {
     logo.sprite.SetOpacity(1);
 }
 
-fun rotate_spinner () {
-    if (global.spinner_step == NULL ) {
-        global.spinner_step = 0;
-    }
-
-    global.spinner_step--;
-    position = global.spinner_step * (6.28319 / spinner.rot.steps); # rotate 2pi/steps
-    spinner.sprite.SetImage(spinner.image.Rotate (position));
-}
 
 # Implement in boot progress callback
 fun animate_progress_indicator (progress, time) {
@@ -221,7 +220,7 @@ fun animate_progress_indicator (progress, time) {
 
     Debug ("progress = " + progress + ", time = " + time );
 
-    if ((progress - global.progress) >= spinner.rot.delay) {
+    if ((progress - global.progress) >= spinner.rotation.delay) {
         global.progress = progress;
         rotate_spinner();
     }
