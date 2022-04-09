@@ -1,52 +1,8 @@
 [Plymouth Theme]
 Name=walpy-glitch
 Description=Personal plymouth theme by allan_walpy
-ModuleName=two-step
+ModuleName=script
 
-[two-step]
+[script]
 ImageDir=/usr/share/plymouth/themes/walpy-glitch
-DialogHorizontalAlignment=.5
-DialogVerticalAlignment=.382
-TitleHorizontalAlignment=.5
-TitleVerticalAlignment=.382
-HorizontalAlignment=.5
-VerticalAlignment=.5
-WatermarkHorizontalAlignment=.5
-WatermarkVerticalAlignment=.96
-Transition=merge-fade
-TransitionDuration=1
-BackgroundStartColor=0x282828
-BackgroundEndColor=0x282828
-ProgressBarBackgroundColor=0x606060
-ProgressBarForegroundColor=0xffffff
-MessageBelowAnimation=true
-
-[boot-up]
-UseEndAnimation=true
-
-[shutdown]
-UseEndAnimation=true
-
-[reboot]
-UseEndAnimation=true
-
-[updates]
-SuppressMessages=true
-ProgressBarShowPercentComplete=true
-UseProgressBar=true
-Title=process://update --stage installing
-SubTitle=reality://computer --disable shutdown
-
-[system-upgrade]
-SuppressMessages=true
-ProgressBarShowPercentComplete=true
-UseProgressBar=true
-Title=process://upgrade --module system
-SubTitle=reality://computer --disable shutdown
-
-[firmware-upgrade]
-SuppressMessages=true
-ProgressBarShowPercentComplete=true
-UseProgressBar=true
-Title=process://upgrade --module firmware
-SubTitle=reality://computer --disable shutdown
+ScriptFile=/usr/share/plymouth/themes/walpy-glitch/index.script

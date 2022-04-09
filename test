@@ -3,7 +3,8 @@
 Color='\033[0;33m'
 NoColor='\033[0m'
 
-./test.disk
+#plymouth ask-for-password --prompt "filesystem encrypted" --dont-pause-progress
+sleep 3
 
 #for i in {1..10}
 #do
@@ -18,11 +19,7 @@ NoColor='\033[0m'
 #    sleep 1
 #done
 
-sleep 1
-
-echo -e "${Color}plymouth://process/hide ${NoColor}"
-sudo plymouth quit --retain-splash
-sleep 1
+./test.disk
 
 exit 0
 
