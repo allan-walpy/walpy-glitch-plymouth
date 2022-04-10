@@ -16,7 +16,7 @@ _screen_height = Window.GetHeight();
 _screen_x = Window.GetX();
 _screen_y = Window.GetY();
 
-_offcet = Math.Int(_screen_width / 42);
+_offcet = Math.Int(_screen_width / 84);
 
 _logo_z = 0;
 
@@ -34,6 +34,9 @@ fun _draw_sprite(s, x, y, z, o) { s.SetPosition(x, y, z); s.SetOpacity(o); }
 Window.SetBackgroundTopColor(_bg_color_t_r, _bg_color_t_g, _bg_color_t_b);
 Window.SetBackgroundBottomColor(_bg_color_b_r, _bg_color_b_g , _bg_color_b_b);
 
+#! --- logo --- #
+
+logo;
 logo.image = Image(_file_logo);
 logo.width = logo.image.GetWidth();
 logo.height = logo.image.GetHeight();
@@ -47,6 +50,11 @@ draw_logo();
 fun draw_logo() _draw_sprite(logo.sprite, logo.x, logo.y, logo.z, logo.opacity);
 
 
+#! --- progress bar --- #
+
+
+
+
 #! --- callback --- #
 
 fun refresh_callback()
@@ -54,3 +62,9 @@ fun refresh_callback()
     draw_logo();
 }
 Plymouth.SetRefreshFunction(refresh_callback);
+
+fun process_callback()
+{
+
+}
+Plymouth.SetBootProgressFunction(progress_callback);
