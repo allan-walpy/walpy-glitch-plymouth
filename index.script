@@ -305,57 +305,25 @@ fun password_dialogue_opacity(opacity) {
             bullets[index].sprite.SetOpacity(opacity);
 }
 
-
-
-# Plymouth.SetBootProgressFunction: the callback function is called with two numbers, the progress (between 0 and 1) and the time spent booting so far
-# Plymouth.SetRootMountedFunction: the callback function is called when a new root is mounted
-# Plymouth.SetKeyboardInputFunction: the callback function is called with a string containing a new character entered on the keyboard
-
-#----------------------------------------- FSCK Counter --------------------------------
+#! --- progress --- #
 
 fun init_fsck_count () {
-    # The number of fsck checks in this cycle
     global.counter.total = 0;
-    # The number of fsck checks already performed + the current one
     global.counter.current = 1;
-    # The previous fsck
+    global.counter.last = 0;    global.counter.total = 0;
+    global.counter.current = 1;
     global.counter.last = 0;
 }
 
-# Increase the total counter
-fun increase_fsck_count () {
-    global.counter.total++;
-}
+fun increase_fsck_count () { global.counter.total++; }
 
-fun increase_current_fsck_count () {
-    global.counter.last = global.counter.current++;
-}
+fun increase_current_fsck_count () { global.counter.last = global.counter.current++; }
 
-# Clear the counter
-fun clear_fsck_count () {
-    global.counter = NULL;
-    init_fsck_count ();
-}
+fun clear_fsck_count () { global.counter = NULL; init_fsck_count(); }
 
-#----------------------------------------- Progress Label ------------------------------
-
-
-# Change the opacity level of a progress label
-#
-# opacity = 1 -> show
-# opacity = 0 -> hide
-# opacity = 0.3 (or any other float) -> translucent
-#
 fun set_progress_label_opacity (opacity) {
-    # the label
-    progress_label.sprite.SetOpacity (opacity);
-
-    # Make the slot available again when hiding the bar
-    # So that another bar can take its place
-    if (opacity == 0) {
-        progress_label.is_available = 1;
-        progress_label.device = "";
-    }
+    progress_label.sprite.SetOpacity(opacity);
+    if (opacity == 0) { progress_label.is_available = 1; progress_label.device = ""; }
 }
 
 # Set up a new Progress Bar
@@ -366,71 +334,39 @@ fun set_progress_label_opacity (opacity) {
 #       device and the image size of the sprite.
 
 fun init_progress_label (device, status_string) {
-    # Make the slot unavailable
     global.progress_label.is_available = 0;
     progress_label.progress = 0;
     progress_label.device = device;
     progress_label.status_string = status_string;
 }
 
-# See if the progress label is keeping track of the fsck
-# of "device"
-#
-fun device_has_progress_label (device) {
-    DebugBottom ("label device = " + progress_label.device + " checking device " + device);
-    return (progress_label.device == device);
-}
+fun device_has_progress_label (device) { (progress_label.device == device); }
 
-# Update the Progress bar which corresponds to index
-#
 fun update_progress_label (progress) {
-    # If progress is NULL then we just refresh the label.
-    # This happens when only counter.total has changed.
-    if (progress != NULL) {
+    if ((progress != NULL) || (progcess <= 0)) {
         progress_label.progress = progress;
-
-        Debug("device " + progress_label.device + " progress " + progress);
-
-        # If progress >= 100% hide the label and make it available again
         if (progress >= 100) {
             set_progress_label_opacity (0);
-
-            # See if we any other fsck check is complete
-            # and, if so, hide the progress bars and the labels
             on_fsck_completed ();
-
             return 0;
         }
     }
-    # Update progress label here
-    #
-    # FIXME: the queue logic from this theme should really be moved into mountall
-    # instead of using string replacement to deal with localised strings.
-    label = StringReplace (progress_label.status_string[0], "%1$d", global.counter.current);
-    label = StringReplace (label, "%2$d",  global.counter.total);
-    label = StringReplace (label, "%3$d",  progress_label.progress);
-    label = StringReplace (label, "%%",  "%");
 
-    progress_label = get_fsck_label (label, 0);
-    #progress_label.progress = progress;
+    label = "process://disk/scan/";
+    if (progress_label.device) label += progress_label.device;
+    if (global.counter.total > 1) label += " --task-number " + global.counter.current + "/" + global.counter.total;
+    label += " --progress "; if (progress < 10) label += "0"; label += progress;
 
-    progress_label.sprite = Sprite (progress_label.image);
+    progress_label = get_fsck_label(label, 0);
+    progress_label.progress = progress;
 
-    # Set up the bar
+    progress_label.sprite = Sprite(progress_label.image);
     progress_label.sprite.SetPosition(progress_label.x, progress_label.y, 1);
-
-    set_progress_label_opacity (1);
-
+    set_progress_label_opacity(1);
 }
 
-# Refresh the label so as to update counters
-fun refresh_progress_label () {
-    update_progress_label (NULL);
-}
+fun refresh_progress_label () { update_progress_label(NULL); }
 
-#----------------------------------------- FSCK Queue ----------------------------------
-
-# Initialise the fsck queue
 fun init_queue () {
     global.fsck_queue[0].device;
     global.fsck_queue[0].progress;
@@ -438,50 +374,32 @@ fun init_queue () {
     global.fsck_queue.biggest_item = 0;
 }
 
-fun clear_queue () {
-    global.fsck_queue = NULL;
-    init_queue ();
-}
+fun clear_queue () { global.fsck_queue = NULL; init_queue(); }
 
-# Return either the device index in the queue or -1
 fun queue_look_up_by_device (device) {
-    for (i=0; i <= fsck_queue.biggest_item; i++) {
+    for (i = 0; i <= fsck_queue.biggest_item; i++) {
         if ((fsck_queue[i]) && (fsck_queue[i].device == device))
             return i;
     }
     return -1;
 }
 
-# Keep track of an fsck process in the queue
 fun add_fsck_to_queue (device, progress) {
-    # Look for an empty slot in the queue
-    for (i=0; global.fsck_queue[i].device; i++) {
-        continue;
-    }
+    for (i = 0; global.fsck_queue[i].device; i++) continue;
     local.index = i;
 
-    # Set device and progress
     global.fsck_queue[local.index].device = device;
     global.fsck_queue[local.index].progress = progress;
 
-    # Increase the queue counter
     global.fsck_queue.counter++;
 
-    # Update the max index of the array for iterations
     if (local.index > global.fsck_queue.biggest_item)
         global.fsck_queue.biggest_item = local.index;
-
-    DebugMedium ("Adding " + device + " at " + local.index);
 }
 
-fun is_queue_empty () {
-    return (fsck_queue.counter == 0);
-}
+fun is_queue_empty () { return (fsck_queue.counter == 0); }
 
-fun is_progress_label_available () {
-    return (progress_label.is_available == 1);
-}
-
+fun is_progress_label_available () { return (progress_label.is_available == 1); }
 
 # This should cover the case in which the fsck checks in
 # the queue are completed before the ones showed in the
@@ -845,6 +763,10 @@ Plymouth.SetQuitFunction(quit_callback);
 
 
 #! -- callbacks --#
+
+# Plymouth.SetBootProgressFunction: the callback function is called with two numbers, the progress (between 0 and 1) and the time spent booting so far
+# Plymouth.SetRootMountedFunction: the callback function is called when a new root is mounted
+# Plymouth.SetKeyboardInputFunction: the callback function is called with a string containing a new character entered on the keyboard
 
 
 fun boot_progress_callback (progress, time) {
