@@ -11,12 +11,14 @@ _bg_color_b_r = 0.13;
 _bg_color_b_g = 0.13;
 _bg_color_b_b = 0.13;
 
-_logo_z = 0;
-
 _screen_width = Window.GetWidth();
 _screen_height = Window.GetHeight();
 _screen_x = Window.GetX();
 _screen_y = Window.GetY();
+
+_offcet = Math.Int(_screen_width / 42);
+
+_logo_z = 0;
 
 fun _get_center_x(width)  _screen_x + _screen_width / 2 - width / 2;
 fun _get_center_y(height) _screen_y + _screen_height / 2 - height / 2;
@@ -25,7 +27,7 @@ fun _get_bottom(height)   _screen_y + _screen_height - height;
 fun _get_left(width)      _screenx;
 fun _get_right(width)     _screenx + _screen_width - width;
 
-func _draw_spprite(s, x, y, z, o) { s.SetPosition(x, y, z); s.SetOpacity(o); }
+fun _draw_sprite(s, x, y, z, o) { s.SetPosition(x, y, z); s.SetOpacity(o); }
 
 #! --- main set-ups --- #
 
@@ -36,13 +38,14 @@ logo.image = Image(_file_logo);
 logo.width = logo.image.GetWidth();
 logo.height = logo.image.GetHeight();
 logo.x = _get_center_x(logo.width);
-logo.y = _get_bottom(logo.height);
+logo.y = _get_bottom(logo.height) - _offcet * 2;
 logo.z = _logo_z;
 logo.opacity = 1;
 logo.sprite = Sprite(logo.image);
 draw_logo();
 
-func draw_logo() _draw_spprite(logo.sprite, logo.x, logo.y, logo.z, logo.opacity);
+fun draw_logo() _draw_sprite(logo.sprite, logo.x, logo.y, logo.z, logo.opacity);
+
 
 #! --- callback --- #
 
