@@ -6,6 +6,7 @@ file_logo = "logo.png";
 fille_password_field = "password_field.png";
 fille_password_progress_dot = "progress_dot_off.png";
 fille_question_field = "password_field.png";
+fille_question_progress_dot = "progress_dot_off.png";
 
 #! --- global vars --- #
 
@@ -56,7 +57,7 @@ debugsprite_medium = Sprite();
 
 #!_____
 fun Debug (text) {
-    #debugsprite.SetImage(TextToImage (text));
+    debugsprite.SetImage(TextToImage (text));
 }
 
 #!_____
@@ -471,221 +472,48 @@ fun fsck_check (device, progress, status_string) {
     }
 }
 
+#! --- question --- #
 
-#-----------------------------------------Update Status stuff --------------------------
-#
-# The update_status_callback is what we can use to pass plymouth whatever we want so
-# as to make use of features which are available only in this program (as opposed to
-# being available for any theme for the script plugin).
-#
-# Example:
-#
-#   Thanks to the current implementation, some scripts can call "plymouth --update=fsck:sda1:40"
-#   and this program will know that 1) we're performing and fsck check, 2) we're checking sda1,
-#   3) the program should set the label progress to 40%
-#
-# Other features can be easily added by parsing the string that we pass plymouth with "--update"
-#
-fun update_status_callback (status) {
-    Debug(status);
-    if (!status) return;
-
-    string_it = 0;
-    update_strings[string_it] = "";
-
-    for (i=0; (String(status).CharAt(i) != ""); i++) {
-        local.temp_char = String(status).CharAt(i);
-        if (temp_char != ":")
-            update_strings[string_it] += temp_char;
-        else
-            update_strings[++string_it] = "";
-    }
-
-    my_string = update_strings[0] + " " + update_strings[1] + " " + update_strings[2];
-    Debug(my_string);
-    # Let's assume that we're dealing with these strings fsck:sda1:40
-    if ((string_it >= 2) && (update_strings[0] == "fsck")) {
-
-        device = update_strings[1];
-        progress = update_strings[2];
-        status_string[0] = update_strings[3]; # "Checking disk %1$d of %2$d (%3$d %% complete)"
-        if (!status_string[0])
-            status_string[0] = "Checking disk %1$d of %2$d (%3$d %% complete)";
-
-        if ((device != "") && (progress != "")) {
-            progress = ToInteger (progress);
-
-            # Make sure that the fsck_queue is initialised
-            if (!global.fsck_queue)
-                init_queue ();
-
-            # Make sure that the fsck counter is initialised
-            if (!global.counter)
-                init_fsck_count ();
-
-#            if (!global.progress_bar.extra_label.sprite)
-#                create_extra_fsck_label ();
-
-            # Keep track of the fsck check
-            fsck_check (device, progress, status_string);
-        }
-
-    }
-
-    # systemd-fsckd pass fsckd:<number_devices>:<progress>:<l10n_string>
-    if (update_strings[0] == "fsckd") {
-        number_devices = ToInteger(update_strings[1]);
-
-        if (number_devices > 0) {
-            label = update_strings[3];
-
-            progress_label = get_fsck_label (label, 0);
-            progress_label.sprite = Sprite (progress_label.image);
-            progress_label.sprite.SetPosition(progress_label.x, progress_label.y, 1);
-            progress_label.sprite.SetOpacity (1);
-        } else {
-            if (progress_label.sprite)
-                progress_label.sprite.SetOpacity (0);
-        }
-    }
-
-}
-
-Plymouth.SetUpdateStatusFunction (update_status_callback);
-
-#-----------------------------------------Display Question stuff -----------------------
+prompt_z_backgroud = 200;
 
 fun question_dialogue_setup (message_label, text_image) {
-    Debug("Question dialog setup");
-
     local.field;
     local.content;
     local.margin;
 
-    field.image = Image (fille_question_field);
-    content = Sprite ();
-    bullet_image = Image (fille_password_progress_dot);
+    field.image = Image(fille_question_field);
+    content = Sprite();
+    bullet_image = Image(fille_question_progress_dot);
     margin = bullet_image.GetWidth() / 2;
 
-    # Hide the normal labels
     is_prompt_active = 1;
-    if (message_notification[1].sprite) hide_message (1);
+    if (message_notification[1].sprite) hide_message(1);
 
-    # Set the prompt label
     label = get_message_label(message_label, 0, 1);
-    label.z = 10000;
+    label.z = prompt_z_backgroud + 1;
 
-    place_message (message_label, label.x, label.y, label.z, 2);
-    show_message (2);
+    place_message(message_label, label.x, label.y, label.z, 2);
+    show_message(2);
 
-    # Set up the text field which contains the contents
-    field.sprite = Sprite ();
-    field.sprite.SetImage (field.image);
+    field.sprite = Sprite();
+    field.sprite.SetImage(field.image);
 
-    # Centre the box horizontally
-    field.x = screen_x + screen_width / 2 - field.image.GetWidth () / 2;
+    field.x = get_center_x(field.image.GetWidth());
     content_x = field.x + margin;
 
-    # Put the field below the second label.
     field.y = message_notification[2].y + label.height;
     content_y = field.y + field.image.GetHeight () / 2 - text_image.GetHeight () / 2;
 
-    Debug ("field x = " + field.x + ", y = " + field.y);
-    field.z = 10000;
+    field.z = prompt_z_backgroud + 10;
     field.sprite.SetX (field.x);
     field.sprite.SetY (field.y);
     field.sprite.SetZ (field.z);
 
-    Debug ("content_x = " + content_x + " content_y = " + content_y);
     content_z = field.z + 1;
     content.SetPosition (content_x, content_y, content_z);
 
     global.question_dialogue = local;
 }
-
-# The callback function is called when the display should display a question dialogue.
-# First arg is prompt string, the second is the field contents.
-fun display_question_callback (prompt, contents) {
-    global.status = "question";
-    Debug ("Reply: " + contents);
-
-    textImage = TextToImage(contents);
-    if (!global.question_dialogue) {
-        question_dialogue_setup(prompt, textImage);
-    }
-
-    margin = global.question_dialogue.margin;
-    fieldWidth = global.question_dialogue.field.image.GetWidth ();
-    for (i = 0; ( (textImage.GetWidth () + 2 * margin) > fieldWidth); i++) {
-        textImage = TextToImage(Copy (contents, i, GetLength (contents)));
-    }
-
-    global.question_dialogue.content.SetImage (textImage);
-}
-
-
-Plymouth.SetDisplayQuestionFunction (display_question_callback);
-
-#-----------------------------------------Refresh stuff --------------------------------
-#
-# Calling Plymouth.SetRefreshFunction with a function will set that function to be
-# called up to 50 times every second, e.g.
-#
-# NOTE: if a refresh function is not set, Plymouth doesn't seem to be able to update'
-#       the screen correctly
-#
-fun refresh_callback ()
-{
-    redraw_logo ();
-}
-Plymouth.SetRefreshFunction (refresh_callback);
-
-
-#-----------------------------------------Display Normal stuff -----------------------
-#
-# The callback function is called when the display should return to normal
-fun display_normal_callback ()
-{
-    global.status = "normal";
-    if (global.password_dialogue) {
-        password_dialogue_opacity (0);
-        global.password_dialogue = NULL;
-        if (message_notification[2].sprite) hide_message(2);
-        is_prompt_active = 0;
-    }
-    if (global.question_dialogue) {
-        question_dialogue_opacity (0);
-        global.question_dialogue = NULL;
-        if (message_notification[2].sprite) hide_message(2);
-        is_prompt_active = 0;
-    }
-
-    if (message_notification[1].sprite) show_message (1);
-
-}
-
-Plymouth.SetDisplayNormalFunction (display_normal_callback);
-
-
-#----------------------------------------- Quit --------------------------------
-
-# TODO: Maybe we should also hide any other dialog
-# Show the logo and make the progress indicator look full when on exit
-fun quit_callback ()
-{
-    logo.sprite.SetOpacity (1);
-    switch_on_bullets ();
-}
-
-Plymouth.SetQuitFunction(quit_callback);
-
-
-#! -- callbacks --#
-
-# Plymouth.SetBootProgressFunction: the callback function is called with two numbers, the progress (between 0 and 1) and the time spent booting so far
-# Plymouth.SetRootMountedFunction: the callback function is called when a new root is mounted
-# Plymouth.SetKeyboardInputFunction: the callback function is called with a string containing a new character entered on the keyboard
-
 
 fun boot_progress_callback (progress, time) {
     rotate_spinner(1); global.progress = progress;
@@ -753,3 +581,118 @@ fun display_password_callback (prompt, bullets) {
     }
 }
 Plymouth.SetDisplayPasswordFunction (display_password_callback);
+
+fun update_status_callback (status) {
+    Debug(status);
+    if (!status) return;
+
+    string_it = 0;
+    update_strings[string_it] = "";
+
+    for (i=0; (String(status).CharAt(i) != ""); i++) {
+        local.temp_char = String(status).CharAt(i);
+        if (temp_char != ":")
+            update_strings[string_it] += temp_char;
+        else
+            update_strings[++string_it] = "";
+    }
+
+    my_string = update_strings[0] + " " + update_strings[1] + " " + update_strings[2];
+    Debug(my_string);
+    # Let's assume that we're dealing with these strings fsck:sda1:40
+    if ((string_it >= 2) && (update_strings[0] == "fsck")) {
+
+        device = update_strings[1];
+        progress = update_strings[2];
+        status_string[0] = update_strings[3]; # "Checking disk %1$d of %2$d (%3$d %% complete)"
+        if (!status_string[0])
+            status_string[0] = "Checking disk %1$d of %2$d (%3$d %% complete)";
+
+        if ((device != "") && (progress != "")) {
+            progress = ToInteger (progress);
+
+            # Make sure that the fsck_queue is initialised
+            if (!global.fsck_queue)
+                init_queue ();
+
+            # Make sure that the fsck counter is initialised
+            if (!global.counter)
+                init_fsck_count ();
+
+#            if (!global.progress_bar.extra_label.sprite)
+#                create_extra_fsck_label ();
+
+            # Keep track of the fsck check
+            fsck_check (device, progress, status_string);
+        }
+
+    }
+
+    # systemd-fsckd pass fsckd:<number_devices>:<progress>:<l10n_string>
+    if (update_strings[0] == "fsckd") {
+        number_devices = ToInteger(update_strings[1]);
+
+        if (number_devices > 0) {
+            label = update_strings[3];
+
+            progress_label = get_fsck_label (label, 0);
+            progress_label.sprite = Sprite (progress_label.image);
+            progress_label.sprite.SetPosition(progress_label.x, progress_label.y, 1);
+            progress_label.sprite.SetOpacity (1);
+        } else {
+            if (progress_label.sprite)
+                progress_label.sprite.SetOpacity (0);
+        }
+    }
+
+}
+Plymouth.SetUpdateStatusFunction (update_status_callback);
+
+fun display_question_callback (prompt, contents) {
+    global.status = "question";
+    Debug ("Reply: " + contents);
+
+    textImage = TextToImage(contents);
+    if (!global.question_dialogue) question_dialogue_setup(prompt, textImage);
+
+    margin = global.question_dialogue.margin;
+    fieldWidth = global.question_dialogue.field.image.GetWidth ();
+    for (i = 0; ((textImage.GetWidth() + 2 * margin) > fieldWidth); i++)
+        textImage = TextToImage(Copy(contents, i, GetLength(contents)));
+
+    global.question_dialogue.content.SetImage(textImage);
+}
+Plymouth.SetDisplayQuestionFunction (display_question_callback);
+
+fun refresh_callback () { redraw_logo (); }
+Plymouth.SetRefreshFunction (refresh_callback);
+
+fun display_normal_callback ()
+{
+    global.status = "normal";
+    if (global.password_dialogue) {
+        password_dialogue_opacity (0);
+        global.password_dialogue = NULL;
+        if (message_notification[2].sprite) hide_message(2);
+        is_prompt_active = 0;
+    }
+    if (global.question_dialogue) {
+        question_dialogue_opacity (0);
+        global.question_dialogue = NULL;
+        if (message_notification[2].sprite) hide_message(2);
+        is_prompt_active = 0;
+    }
+
+    if (message_notification[1].sprite) show_message (1);
+
+}
+
+Plymouth.SetDisplayNormalFunction (display_normal_callback);
+
+# TODO: Maybe we should also hide any other dialog
+fun quit_callback ()
+{
+    logo.sprite.SetOpacity (1);
+    switch_on_bullets ();
+}
+Plymouth.SetQuitFunction(quit_callback);
