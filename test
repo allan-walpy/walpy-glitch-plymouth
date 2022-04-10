@@ -10,6 +10,10 @@ do
     sleep 0.3
 done
 
+sleep 1
+
+# plymouth message "hello world"
+
 #plymouth ask-for-password --prompt "filesystem encrypted" --dont-pause-progress
 
 #for i in {1..10}

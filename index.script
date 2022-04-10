@@ -3,6 +3,9 @@
 file_bg_noize = "noise.png";
 file_bg_spinner = "spinner.png";
 file_logo = "logo.png";
+fille_password_field = "password_field.png";
+fille_password_progress_dot = "progress_dot_off.png";
+fille_question_field = "password_field.png";
 
 #! --- global vars --- #
 
@@ -53,19 +56,19 @@ debugsprite_medium = Sprite();
 
 #!_____
 fun Debug (text) {
-    debugsprite.SetImage(TextToImage (text));
+    #debugsprite.SetImage(TextToImage (text));
 }
 
 #!_____
 fun DebugBottom (text) {
-    debugsprite_bottom.SetImage(TextToImage (text));
-    debugsprite_bottom.SetPosition(0, (screen_height - 20), 1);
+    #debugsprite_bottom.SetImage(TextToImage (text));
+    #debugsprite_bottom.SetPosition(0, (screen_height - 20), 1);
 }
 
 #!_____
 fun DebugMedium (text) {
-    debugsprite_medium.SetImage(TextToImage (text));
-    debugsprite_medium.SetPosition(0, (screen_height - 60), 1);
+    #debugsprite_medium.SetImage(TextToImage (text));
+    #debugsprite_medium.SetPosition(0, (screen_height - 60), 1);
 }
 
 #! --- string manipulation --- #
@@ -104,7 +107,7 @@ fun StringReplace (source, pattern, replacement) {
 
 fun ToInteger (str) {
     for (i = 0; i <= 256; i++)
-        if (i+"" == str) return i;
+        if (i + "" == str) return i;
     return -1;
 }
 
@@ -125,8 +128,7 @@ fun place_noize () {
     for (x = 0; x * width < screen_width; x++)
         for (y = 0; y * height < screen_height; y++)
         {
-            noise.sprite[x][y] = Sprite();
-            noise.sprite[x][y].SetImage(noise.image);
+            noise.sprite[x][y] = Sprite(noise.image);
             noise.sprite[x][y].SetX(x * width);
             noise.sprite[x][y].SetY(y * height);
             noise.sprite[x][y].SetZ(z);
@@ -135,7 +137,7 @@ fun place_noize () {
 
 place_noize();
 
-#! -- logo -- #
+#! -- logo & spinner -- #
 
 fun get_center_x(width) {
     return screen_x + screen_width / 2 - width / 2;
@@ -155,8 +157,7 @@ fun get_top(height) {
 
 fun create_sprite(filename, z) {
     object.image = Image(filename);
-    object.sprite = Sprite();
-    object.sprite.SetImage(object.image);
+    object.sprite = Sprite(object.image);
     object.width = object.image.GetWidth();
     object.height = object.image.GetHeight();
     object.z = z;
@@ -174,36 +175,6 @@ fun place_sprite(ref, x, y)
 logo = create_sprite(file_logo, backgroud_z + 1);
 place_sprite(logo, get_center_x(logo.width), get_bottom(logo.height) - 100);
 
-spinner = create_sprite(file_bg_spinner, backgroud_z + 2);
-place_sprite(spinner, get_center_x(spinner.width), get_top(spinner.height) + spinner.height / 2);
-spinner.rotation.steps = 60;
-spinner.rotation.delay = 0.02;
-spinner_step = 0;
-
-fun rotate_spinner () {
-    spinner_step--;
-    position = spinner_step * (6.283185 / spinner.rotation.steps);
-    spinner.sprite.SetImage(spinner.image.Rotate (position));
-}
-
-
-
-progress_dot_off_filename = "progress_dot_off.png";
-password_field_filename = "password_field.png";
-question_field_filename = "password_field.png";
-
-
-logo_spacing = logo.height;
-
-message_notification[0].image = TextTintedToImage ("");
-message_notification[1].image = TextTintedToImage ("");
-fsck_notification.image = TextActionToImage ("");
-
-status = "normal";
-sample_password = "MY282HRiQfjCKf57";
-
-first_line_height = TextTintedToImage(sample_password).GetHeight();
-
 fun redraw_logo () {
     logo.sprite.SetX(logo.x);
     logo.sprite.SetY(logo.y);
@@ -211,114 +182,81 @@ fun redraw_logo () {
     logo.sprite.SetOpacity(1);
 }
 
+spinner = create_sprite(file_bg_spinner, backgroud_z + 2);
+place_sprite(spinner, get_center_x(spinner.width), get_top(spinner.height) + spinner.height / 8);
+spinner.rotation.steps = 60;
+spinner.rotation.delay = 0.02;
+spinner_step = 0;
 
-# Implement in boot progress callback
-fun animate_progress_indicator (progress, time) {
-    if (global.progress == NULL) {
-        global.progress = progress;
-    }
-
-    Debug ("progress = " + progress + ", time = " + time );
-
-    if ((progress - global.progress) >= spinner.rotation.delay) {
-        global.progress = progress;
-        rotate_spinner();
-    }
-
+fun rotate_spinner (direction) {
+    spinner_step -= direction;
+    position = spinner_step * (6.283185 / spinner.rotation.steps);
+    spinner.sprite.SetImage(spinner.image.Rotate (position));
 }
 
-# label should be either a string or NULL
-# Images for n lines will be created and returned as items of the
-# message_label array
-#
-fun get_message_label (label, is_fake, is_action_line) {
-     Debug("Get Label position");
+fun boot_progress_callback (progress, time) {
+    rotate_spinner(1); global.progress = progress;
+}
+
+#! --- messages --- #
+
+message_notification[0].image = TextTintedToImage("");
+message_notification[1].image = TextTintedToImage("");
+fsck_notification.image = TextActionToImage("");
+status = "normal";
+dummy_message = "message://dummy --test dummy-message";
+sample_password = "MY282HRiQfjCKf57";
+line_height_standart = TextTintedToImage(sample_password).GetHeight();
+
+fun get_message_label (label, is_dummy, is_action_line) {
     local.message_label;
 
-    if (is_fake)
-        # Create a fake label so as to get the y coordinate of
-        # a standard-length label.
-        local.message_image = TextTintedToImage ("This is a fake message");
-    else
-        local.message_image = (is_action_line) && TextActionToImage (label) || TextTintedToImage (label);
+    local.message_image = (is_dummy) && TextTintedToImage(dummy_message)
+        || (is_action_line) && TextActionToImage(label)
+        || TextTintedToImage(label);
 
-    message_label.width = message_image.GetWidth ();
-    message_label.height = message_image.GetHeight ();
+    message_label.width = message_image.GetWidth();
+    message_label.height = message_image.GetHeight();
 
-    # Center the line horizontally
-    message_label.x = screen_x + screen_width / 2 - message_label.width / 2;
+    message_label.x = get_center_x(message_label.width);
+    message_label.y = get_center_y(message_label.height);
 
-    message_label.y = logo.y + logo.height + logo_spacing;
-
-    # Put the 2nd line below the fsck line
     if (is_action_line) {
-        local.fsck_label.y = message_label.y + (first_line_height + first_line_height / 2);
-        message_label.y = local.fsck_label.y + (first_line_height * 2);
+        local.fsck_label.y = message_label.y + (line_height_standart + line_height_standart / 2);
+        message_label.y = local.fsck_label.y + (line_height_standart * 2);
     }
 
-    Debug("action label x = " + message_label.x + " y = " + message_label.y);
-
-    message_debug = "msg_x = " + message_label.x + " msg_y = " + message_label.y +
-                    "msg_width = " + message_label.width + " msg_height = " +
-                    message_label.height + " message = " + label;
-    Debug(message_debug);
-
     return message_label;
-
 }
 
-# Create an fsck label and/or get its position
-fun get_fsck_label (label, is_fake) {
-     Debug("Get Label position");
+fun get_fsck_label (label, is_dummy) {
     local.fsck_label = global.progress_label;
 
-    if (is_fake)
-        fsck_label.image = TextTintedToImage ("This is a fake message");
-    else
-        fsck_label.image = TextTintedToImage (label);
+    fsck_label.image = (is_dummy) && TextTintedToImage(dummy_message)
+        || fsck_label.image = TextTintedToImage(label);
 
-    fsck_label.width = fsck_label.image.GetWidth ();
-    fsck_label.height = fsck_label.image.GetHeight ();
+    fsck_label.width = fsck_label.image.GetWidth();
+    fsck_label.height = fsck_label.image.GetHeight();
 
-    # Centre the label horizontally
-    fsck_label.x = screen_x  + screen_width / 2 - fsck_label.width / 2;
-
-    local.first_label = get_message_label (label, 1, 0);
-
-    # Place the label below the 1st message line
-    fsck_label.y = local.first_label.y + local.first_label.height + (local.first_label.height / 2);
-
-    message_debug = "msg_x = " + fsck_label.x + " msg_y = " + fsck_label.y +
-                    "msg_width = " + fsck_label.width + " msg_height = " +
-                   fsck_label.height + " message = " + label;
-
-    Debug(message_debug);
+    a_label = get_message_label(label, 1, 0);
+    fsck_label.x = get_center_x(fsck_label.width);
+    fsck_label.y = a_label.y + a_label.height + a_label.height / 2;
 
     return fsck_label;
 }
 
-#-----------------------------------------Message stuff --------------------------------
-#
-
-# Set up a message label
-#
-# NOTE: this is called when doing something like 'plymouth message "hello world"'
-#
 fun setup_message (message_text, x, y, z, index) {
-    Debug("Message setup");
-    global.message_notification[index].image = (index) && TextActionToImage (message_text) || TextTintedToImage (message_text);
+    global.message_notification[index].image = (index) && TextActionToImage(message_text)
+        || TextTintedToImage (message_text);
 
-    # Set up the text message, if any
     message_notification[index].x = x;
     message_notification[index].y = y;
     message_notification[index].z = z;
 
-    message_notification[index].sprite = Sprite ();
-    message_notification[index].sprite.SetImage (message_notification[index].image);
-    message_notification[index].sprite.SetX (message_notification[index].x);
-    message_notification[index].sprite.SetY (message_notification[index].y);
-    message_notification[index].sprite.SetZ (message_notification[index].z);
-
+    message_notification[index].sprite = Sprite(message_notification[index].image);
+    message_notification[index].sprite.SetX (x);
+    message_notification[index].sprite.SetY (y);
+    message_notification[index].sprite.SetZ (z);
 }
 
 fun show_message (index) {
@@ -329,11 +267,6 @@ fun hide_message (index) {
     if (global.message_notification[index].sprite) global.message_notification[index].sprite.SetOpacity(0);
 }
 
-
-
-
-# the callback function is called when new message should be displayed.
-# First arg is message to display.
 fun message_callback (message)
 {
     Debug("Message callback");
@@ -377,8 +310,8 @@ fun password_dialogue_setup (message_label) {
     local.entry;
     local.bullet_image;
 
-    bullet_image = Image (progress_dot_off_filename);
-    entry.image = Image (password_field_filename);
+    bullet_image = Image (fille_password_progress_dot);
+    entry.image = Image (fille_password_field);
 
     # Hide the normal labels
     is_prompt_active = 1;
@@ -473,7 +406,7 @@ Plymouth.SetDisplayPasswordFunction (display_password_callback);
 
 Plymouth.SetMessageFunction (message_callback);
 
-Plymouth.SetBootProgressFunction (animate_progress_indicator);
+Plymouth.SetBootProgressFunction (boot_progress_callback);
 
 # Plymouth.SetBootProgressFunction: the callback function is called with two numbers, the progress (between 0 and 1) and the time spent booting so far
 # Plymouth.SetRootMountedFunction: the callback function is called when a new root is mounted
@@ -894,9 +827,9 @@ fun question_dialogue_setup (message_label, text_image) {
     local.content;
     local.margin;
 
-    field.image = Image (question_field_filename);
+    field.image = Image (fille_question_field);
     content = Sprite ();
-    bullet_image = Image (progress_dot_off_filename);
+    bullet_image = Image (fille_password_progress_dot);
     margin = bullet_image.GetWidth() / 2;
 
     # Hide the normal labels
