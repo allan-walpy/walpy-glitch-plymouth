@@ -1,6 +1,7 @@
 #! --- image files --- #
 
 _file_logo = "logo.png";
+_file_progress_bar = "progress.bar.png"
 
 #! --- global variables --- #
 
@@ -19,6 +20,7 @@ _screen_y = Window.GetY();
 _offcet = Math.Int(_screen_width / 84);
 
 _logo_z = 0;
+_progress_bar_z = 5;
 
 fun _get_center_x(width)  _screen_x + _screen_width / 2 - width / 2;
 fun _get_center_y(height) _screen_y + _screen_height / 2 - height / 2;
@@ -52,14 +54,25 @@ fun draw_logo() _draw_sprite(logo.sprite, logo.x, logo.y, logo.z, logo.opacity);
 
 #! --- progress bar --- #
 
+progress_bar;
+progress_bar.image = Image(_file_progress_bar);
+progress_bar.width = progress_bar.image.GetWidth();
+progress_bar.height = progress_bar.image.GetHeight();
+progress_bar.x = _get_center_x(progress_bar.width);
+progress_bar.y = _get_center_y(progress_bar.height);
+progress_bar.z = _progress_bar_z;
+progress_bar.opacity = 1;
+progress_bar.sprite = Sprite(progress_bar.image);
+draw_progress_bar();
 
-
+fun draw_progress_bar() _draw_sprite(progress_bar.sprite, progress_bar.x, progress_bar.y, progress_bar.z, progress_bar.opacity);
 
 #! --- callback --- #
 
 fun refresh_callback()
 {
     draw_logo();
+    draw_progress_bar();
 }
 Plymouth.SetRefreshFunction(refresh_callback);
 
