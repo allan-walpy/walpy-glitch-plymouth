@@ -1,7 +1,7 @@
 #! --- image files --- #
 
 _file_logo = "logo.png";
-_file_progress_bar = "progress.bar.png"
+_file_progress_bar = "progress.bar.png";
 
 #! --- global variables --- #
 
