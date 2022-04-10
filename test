@@ -3,30 +3,26 @@
 Color='\033[0;33m'
 NoColor='\033[0m'
 
-plymouth update --status fsck:sda1:2
-sleep 0.5
-plymouth update --status fsck:sdb1:1
+sleep 3
 
 # test disk scan
-for i in {3..100}
-do
-    plymouth --update=fsck:sda1:$(($i))
-    sleep 0.05
-done
+#for i in {3..100}
+#do
+#   plymouth --update=fsck:sda1:$(($i))
+#    sleep 0.05
+#done
 
-sleep 1
+#sleep 1
 
-for i in {1..20}
-do
-    plymouth --update=fsck:sdb1:$(($i * 5))
-    sleep 0.05
-done
-
-# plymouth message "hello world"
+#for i in {1..20}
+#do
+#    plymouth --update=fsck:sdb1:$(($i * 5))
+#    sleep 0.05
+#done
 
 #plymouth ask-for-password --prompt "filesystem encrypted" --dont-pause-progress
 
-sleep 1
+#sleep 1
 
 #for i in {1..10}
 #do
@@ -40,6 +36,8 @@ sleep 1
 #    sudo plymouth --update=event:$i
 #    sleep 1
 #done
+
+sleep 3
 
 exit 0
 

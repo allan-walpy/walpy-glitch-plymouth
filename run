@@ -3,16 +3,18 @@
 Color='\033[0;33m'
 NoColor='\033[0m'
 
-rm -f /usr/share/plymouth/themes/walpy-glitch/adawawad
-cp -r . /usr/share/plymouth/themes/walpy-glitch
+rm -f -r /usr/share/plymouth/themes/walpy-glitch/
+cp -r ./ /usr/share/plymouth/themes/walpy-glitch
 
-
+screen -dmS playmouth.preview -L -Logfile daemon.log ./run.daemon
+sleep 1
 echo -e "${Color}plymouth://process/show ${NoColor}"
 plymouth --show-splash
-sleep 3
-./test || true
-
+sleep 1
+./test || killall plymouthd
+sleep 1
 echo -e "${Color}plymouth://process/hide ${NoColor}"
 plymouth --hide-splash
 plymouth --quit
+killall plymouthd
 echo -e "${Color}plymouth://done ${NoColor}"
