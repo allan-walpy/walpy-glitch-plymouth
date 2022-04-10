@@ -8,11 +8,11 @@ cp -r ./ /usr/share/plymouth/themes/walpy-glitch
 
 screen -dmS playmouth.preview -L -Logfile daemon.log ./run.daemon
 sleep 1
+
 echo -e "${Color}plymouth://process/show ${NoColor}"
 plymouth --show-splash
-sleep 1
 ./test || killall plymouthd
-sleep 1
+
 echo -e "${Color}plymouth://process/hide ${NoColor}"
 plymouth --hide-splash
 plymouth --quit
