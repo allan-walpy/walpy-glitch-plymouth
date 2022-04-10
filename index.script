@@ -14,7 +14,7 @@ screen_height = Window.GetHeight(0);
 screen_x = Window.GetX();
 screen_y = Window.GetY();
 
-is_prompt_active = 0;
+is_prompt_active = 1;
 
 #! --- text output --- #
 
@@ -194,12 +194,9 @@ fun rotate_spinner (direction) {
     spinner.sprite.SetImage(spinner.image.Rotate (position));
 }
 
-fun boot_progress_callback (progress, time) {
-    rotate_spinner(1); global.progress = progress;
-}
-
 #! --- messages --- #
 
+message_index_z = 10;
 message_notification[0].image = TextTintedToImage("");
 message_notification[1].image = TextTintedToImage("");
 fsck_notification.image = TextActionToImage("");
@@ -245,7 +242,7 @@ fun get_fsck_label (label, is_dummy) {
     return fsck_label;
 }
 
-fun setup_message (message_text, x, y, z, index) {
+fun place_message (message_text, x, y, z, index) {
     global.message_notification[index].image = (index) && TextActionToImage(message_text)
         || TextTintedToImage (message_text);
 
@@ -269,38 +266,27 @@ fun hide_message (index) {
 
 fun message_callback (message)
 {
-    Debug("Message callback");
-    is_fake = 0;
-    if (!message || (message == "")) is_fake = 1;
+    is_dummy = (!message || (message == ""));
 
     local.substring = "keys:";
-
-    # Look for the "keys:" prefix
     local.keys = GetSubPosition(message, local.substring);
-
     local.is_action_line = (keys != NULL);
-    Debug("keys " + local.keys + " substring length = " + GetLength(local.substring));
 
-    # Get the message without the "keys:" prefix
-    if (keys != NULL)
-        message = Copy (message, keys + GetLength(local.substring), NULL);
+    if (keys != NULL) message = Copy(message, keys + GetLength(local.substring), NULL);
 
-    # Get the message without the "fsckd-cancel-msg" prefix as we don't support i18n'
     substring = "fsckd-cancel-msg:";
     keys = GetSubPosition(message, substring);
     if (keys != NULL)
         message = Copy(message, keys + GetLength(substring), NULL);
 
-    local.label.is_fake = is_fake;
-    label = get_message_label(message, is_fake, is_action_line);
-    label.z = 10000;
+    label = get_message_label(message, is_dummy, is_action_line);
+    label.z = message_index_z + 1;
 
-    setup_message (message, label.x, label.y, label.z, is_action_line);
+    place_message(message, label.x, label.y, label.z, is_action_line);
     if (is_prompt_active && local.is_action_line)
         hide_message (is_action_line);
     else
         show_message (is_action_line);
-
 }
 
 
@@ -321,7 +307,7 @@ fun password_dialogue_setup (message_label) {
     label = get_message_label(message_label, 0, 1);
     label.z = 10000;
 
-    setup_message (message_label, label.x, label.y, label.z, 2);
+    place_message (message_label, label.x, label.y, label.z, 2);
     show_message (2);
 
     # Set up the text entry which contains the bullets
@@ -406,7 +392,6 @@ Plymouth.SetDisplayPasswordFunction (display_password_callback);
 
 Plymouth.SetMessageFunction (message_callback);
 
-Plymouth.SetBootProgressFunction (boot_progress_callback);
 
 # Plymouth.SetBootProgressFunction: the callback function is called with two numbers, the progress (between 0 and 1) and the time spent booting so far
 # Plymouth.SetRootMountedFunction: the callback function is called when a new root is mounted
@@ -840,7 +825,7 @@ fun question_dialogue_setup (message_label, text_image) {
     label = get_message_label(message_label, 0, 1);
     label.z = 10000;
 
-    setup_message (message_label, label.x, label.y, label.z, 2);
+    place_message (message_label, label.x, label.y, label.z, 2);
     show_message (2);
 
     # Set up the text field which contains the contents
@@ -943,3 +928,13 @@ fun quit_callback ()
 }
 
 Plymouth.SetQuitFunction(quit_callback);
+
+
+#! -- callbacks --#
+
+
+fun boot_progress_callback (progress, time) {
+    rotate_spinner(1); global.progress = progress;
+}
+
+Plymouth.SetBootProgressFunction (boot_progress_callback);
