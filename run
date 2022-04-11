@@ -13,10 +13,10 @@ sleep 1
 
 echo -e "${Color}plymouth://process/show ${NoColor}"
 plymouth --show-splash
-./test || killall plymouthd
+./test
 
 echo -e "${Color}plymouth://process/hide ${NoColor}"
 plymouth --hide-splash
 plymouth --quit
-killall plymouthd
+killall plymouthd || true
 echo -e "${Color}plymouth://done ${NoColor}"

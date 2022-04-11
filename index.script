@@ -1,42 +1,80 @@
 #! --- image files --- #
 
 _file_logo = "logo.png";
+_file_bg_image = "background.png";
 _file_progress_bar = "progress.png";
 
 #! --- global variables --- #
 
-_bg_color_t_r = 0.13;
-_bg_color_t_g = 0.13;
-_bg_color_t_b = 0.13;
-_bg_color_b_r = 0.13;
-_bg_color_b_g = 0.13;
-_bg_color_b_b = 0.13;
+_bg_color;
+_bg_color.top;
+_bg_color.top.r = 0.13;
+_bg_color.top.g = 0.13;
+_bg_color.top.b = 0.13;
+_bg_color.bottom;
+_bg_color.bottom.r = 0.13;
+_bg_color.bottom.g = 0.13;
+_bg_color.bottom.b = 0.13;
+
+_text_color;
+_text_color.r = 0.8;
+_text_color.g = 0.8;
+_text_color.b = 0.8;
 
 _screen_width = Window.GetWidth();
 _screen_height = Window.GetHeight();
 _screen_x = Window.GetX();
 _screen_y = Window.GetY();
+_screen_ration = _screen_width / _screen_height;
 
 _offcet = Math.Int(_screen_width / 84);
 
-_logo_z = 0;
+_bg_z = 0;
+_logo_z = 1;
 _progress_bar_z = 5;
 
 fun _get_center_x(width)  _screen_x + _screen_width / 2 - width / 2;
 fun _get_center_y(height) _screen_y + _screen_height / 2 - height / 2;
 fun _get_top(height)      _screen_y;
 fun _get_bottom(height)   _screen_y + _screen_height - height;
-fun _get_left(width)      _screenx;
-fun _get_right(width)     _screenx + _screen_width - width;
+fun _get_left(width)      _screen_x;
+fun _get_right(width)     _screen_x + _screen_width - width;
 
 fun _draw_sprite(s, x, y, z, o) { s.SetPosition(x, y, z); s.SetOpacity(o); }
+fun _draw_image(i) _draw_sprite(i.sprite, i.x, i.y, i.z, i.opacity);
+fun _to_image(text, color) Image.Text(text, color.r, color.g, color.b);
+fun _to_image(text) _to_image(text, _text_color);
+fun _get_scale(width, height) Math.Max(_screen_x / width, _screen_y / height);
+
+_dbg; _dbg.output = Sprite();
+fun _debug(text) _dbg.output.SetImage(_to_image(text));
 
 #! --- main set-ups --- #
 
-Window.SetBackgroundTopColor(_bg_color_t_r, _bg_color_t_g, _bg_color_t_b);
-Window.SetBackgroundBottomColor(_bg_color_b_r, _bg_color_b_g , _bg_color_b_b);
+Window.SetBackgroundTopColor(_bg_color.top.r, _bg_color.top.g, _bg_color.top.b);
+Window.SetBackgroundBottomColor(_bg_color.bottom.r, _bg_color.bottom.g , _bg_color.bottom.b);
+
+#! --- bg_image ---#
+
+fun draw_bg() _draw_image(bg);
+
+bg;
+bg.image = Image(_file_bg_image);
+bg.scale = _get_scale(bg.image.GetWidth(), bg.image.GetHeight());
+bg.width = bg.image.GetWidth() * bg.scale;
+bg.height = bg.image.GetHeight() * bg.scale;
+bg.image = bg.image.Scale(bg.width, bg.height);
+_debug(bg.scale + "");
+bg.x = _screen_x;
+bg.y = _screen_y;
+bg.z = _bg_z;
+bg.opacity = 1;
+bg.sprite = Sprite(bg.image);
+draw_bg();
 
 #! --- logo --- #
+
+fun draw_logo() _draw_image(logo);
 
 logo;
 logo.image = Image(_file_logo);
@@ -49,10 +87,9 @@ logo.opacity = 1;
 logo.sprite = Sprite(logo.image);
 draw_logo();
 
-fun draw_logo() _draw_sprite(logo.sprite, logo.x, logo.y, logo.z, logo.opacity);
-
-
 #! --- progress bar --- #
+
+fun draw_progress_bar() _draw_image(progress_bar);
 
 progress_bar;
 progress_bar.image = Image(_file_progress_bar);
@@ -65,12 +102,12 @@ progress_bar.opacity = 1;
 progress_bar.sprite = Sprite(progress_bar.image);
 draw_progress_bar();
 
-fun draw_progress_bar() _draw_sprite(progress_bar.sprite, progress_bar.x, progress_bar.y, progress_bar.z, progress_bar.opacity);
 
 #! --- callback --- #
 
 fun refresh_callback()
 {
+    draw_bg();
     draw_logo();
     draw_progress_bar();
 }

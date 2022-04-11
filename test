@@ -1,8 +1,5 @@
 #!/bin/bash
 
-Color='\033[0;33m'
-NoColor='\033[0m'
-
 sleep 3
 
 exit 0
