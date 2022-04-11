@@ -13,8 +13,8 @@ _file.password.bg = "password.png";
 _bg_z = 0;
 _logo_z = 3;
 _progress_z = 5;
-_message_z = 10;
 _password_z = 15;
+_message_z = 25;
 _dbg_z = 100;
 
 _bg;
@@ -113,8 +113,8 @@ _prg.label.offset.y = _prg.fill.offset.y;
 _prg.label.is_centered = 1;
 _prg.label.max_value = 256;
 _prg.label.max_length = 52;
-_prg.label.prefix = "%";
-_prg.label.postfix = "%";
+_prg.label.prefix = "#";
+_prg.label.postfix = "x";
 _prg.label.font = "Monospace 36";
 _prg.label.color;
 _prg.label.color.r = 1;
@@ -146,7 +146,10 @@ _msg;
 _msg.z = _message_z;
 
 _msg.sys;
-_msg.sys.z = _msg.z;
+_msg.sys.z = _msg.z + 13;
+
+_msg.sys.bg;
+_msg.sys.bg.z = _msg.sys.z;
 
 fun _get_length (string) { for (i = 0; String(string).CharAt(i); i++) { } return i; }
 
@@ -380,14 +383,14 @@ fun set_progress_all(opacity)
 }
 
 fun draw_progress_all() set_progress_all(1);
-
 fun hide_progress_all() set_progress_all(0);
-
-fun dim_progress_all(opacity) set_progress_all(opacity);
+fun dim_progress_all() set_progress_all(_prg.dim);
+fun undim_progress_all() set_progress_all(1);
 
 #! --- password;bg --- #
 
 password;
+password.is_set = 0;
 password.bg;
 
 fun set_password_bg() {
@@ -399,6 +402,7 @@ fun set_password_bg() {
     password.bg.z = _pass.bg.z;
     password.bg.opacity = 0;
     password.bg.sprite = Sprite(password.bg.image);
+    password.is_set = 1;
 }
 
 fun draw_password_bg() _draw_image(password.bg);
@@ -412,13 +416,11 @@ fun get_password_text(count)
     r = "";
     for (i = 0; i < _pass.bullets.max_length; i++)
         if (i < count) r += _pass.bullets.filler; else r += " ";
-    _debug2(r);
     return r;
 }
 
 password.bullets;
-
-
+password.bullets.is_set = 0;
 
 fun set_password_bullets(count) {
     password.bullets.text = get_password_text(count);
@@ -430,39 +432,42 @@ fun set_password_bullets(count) {
     password.bullets.z = _pass.bullet.z;
     password.bullets.opacity = 0;
     password.bullets.sprite = Sprite(password.bullets.image);
-    draw_password_bullets();
+    password.is_set = 1;
 }
 
 fun draw_password_bullets() _draw_image(password.bullets);
 fun show_password_bullets() { password.bullets.opacity = 1; draw_password_bullets(); }
-fun hide_password_bullets() { password.bullets.opacity = 1; draw_password_bullets(); }
+fun hide_password_bullets() { password.bullets.opacity = 0; draw_password_bullets(); }
 
-fun show_password(bullets) {
-    if (password.bg) set_password_bg();
-    show_password_bg();
-    set_password_bullets(bullets);
-    show_password_bullets();
-}
-
-
+fun show_password_prompt(bullets) { set_password_bg(); show_password_bg(); set_password_bullets(bullets); show_password_bullets(); }
+fun hide_password_prompt() if (password.is_set) { hide_password_bg();  hide_password_bullets(); }
 
 #! --- message;system --- #
 
-# message;
+message;
+message.system;
+message.system.is_set = 0;
+message.system.bg;
 
-# message.system;
-# message.system.image = Image(_file.system_message);
-# message.system.width = message.system.image.GetWidth();
-# message.system.height = message.system.image.GetHeight();
-# message.system.x = _get_center_x(message.system.width);
-# message.system.y = _get_top(message.system.height);
-# message.system.z = _msg.sys.z;
-# message.system.opacity = 0;
-# message.system.sprite = Sprite(message.system.image);
+fun set_message_system_bg()
+{
+    message.system.bg.image = Image(_file.system_message);
+    message.system.bg.width = message.system.bg.image.GetWidth();
+    message.system.bg.height = message.system.bg.image.GetHeight();
+    message.system.bg.x = _get_center_x(message.system.bg.width);
+    message.system.bg.y = _get_top(message.system.bg.height);
+    message.system.bg.z = _msg.sys.bg.z;
+    message.system.bg.opacity = 0;
+    message.system.bg.sprite = Sprite(message.system.bg.image);
+    message.system.is_set = 1;
+}
 
-# fun draw_message_system() { message.system.opacity = 1; _draw_image(message.system); }
-# fun hide_message_system() { message.system.opacity = 0; _draw_image(message.system); }
-# hide_message_system();
+fun draw_message_system_bg() _draw_image(message.system.bg);
+fun show_message_system_bg() { message.system.bg.opacity = 1; draw_message_system_bg(); }
+fun hide_message_system() { message.system.bg.opacity = 0; draw_message_system_bg(); }
+
+set_message_system_bg();
+show_message_system_bg();
 
 #! --- callback --- #
 
@@ -479,11 +484,17 @@ Plymouth.SetBootProgressFunction(boot_progress_callback);
 
 fun display_password_callback(prompt, bullets)
 {
-    dim_progress_all(_prg.dim);
-    show_password(bullets);
-    _debug1(prompt + " / " + bullets);
+    dim_progress_all();
+    show_password_prompt(bullets);
 }
 Plymouth.SetDisplayPasswordFunction(display_password_callback);
+
+fun display_normal_callback()
+{
+    hide_password_prompt();
+    undim_progress_all();
+}
+Plymouth.SetDisplayNormalFunction(display_normal_callback);
 
 fun quit_callback()
 {
@@ -503,11 +514,9 @@ fun dummy2(a, b) {}
 # }
 # Plymouth.SetRootMountedFunction(root_mounted_callback);
 
-Plymouth.SetDisplayNormalFunction(dummy);
 Plymouth.SetDisplayQuestionFunction(dummy2);
 Plymouth.SetDisplayMessageFunction(dummy1);
 Plymouth.SetHideMessageFunction(dummy1);
-
 Plymouth.SetMessageFunction(dummy1);
 Plymouth.SetUpdateStatusFunction(dummy1); # * for debug;
 # * Plymouth.SetKeyboardInputFunction;
