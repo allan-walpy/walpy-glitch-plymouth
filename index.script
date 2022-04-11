@@ -55,6 +55,10 @@ _dbg; _dbg.sprite = Sprite(); _dbg.sprite.SetZ(_dbg_z);
 _dbg.color; _dbg.color.r = 1; _dbg.color.g = 1; _dbg.color.b = 1;
 fun _debug(text) _dbg.sprite.SetImage(_to_image(text, _text_color));
 
+_dbg2; _dbg2.sprite = Sprite(); _dbg2.sprite.SetPosition(0, _screen_height - 50, _dbg_z);
+_dbg2.color; _dbg2.color.r = 1; _dbg2.color.g = 1; _dbg2.color.b = 1;
+fun _debug2(text) _dbg2.sprite.SetImage(_to_image(text, _text_color));
+
 #! --- main set-ups --- #
 
 Window.SetBackgroundTopColor(_bg_color.top.r, _bg_color.top.g, _bg_color.top.b);
@@ -120,6 +124,7 @@ fun get_progress_bar_text(global_state) {
     length = progress.bar.length;
     strip_length = _prg_bar_txt_strip_length;
     state = global_state % length;
+    _debug2(length + ":" + global_state + ":" + state);
 
     r = "";
     for (i = 0 ; l < (length - state); l++)
@@ -142,9 +147,9 @@ fun refresh_callback()
 }
 Plymouth.SetRefreshFunction(refresh_callback);
 
-fun boot_process_callback(duration, progress)
+fun boot_progress_callback(progress, duration)
 {
-
+    _debug(progress + ":" + duration); #get_progress_bar_text(progress));
 }
 Plymouth.SetBootProgressFunction(boot_progress_callback);
 
@@ -154,7 +159,6 @@ fun dummy() {}
 fun dummy1(a) {}
 fun dummy2(a, b) {}
 
-Plymouth.SetBootProgressFunction(dummy2);
 Plymouth.SetDisplayNormalFunction(dummy);
 Plymouth.SetDisplayQuestionFunction(dummy2);
 Plymouth.SetDisplayPasswordFunction(dummy2);
