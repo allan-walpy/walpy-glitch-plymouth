@@ -8,7 +8,7 @@ NoColor='\033[0m'
 rm -f -r /usr/share/plymouth/themes/walpy-glitch/
 cp -r ./ /usr/share/plymouth/themes/walpy-glitch
 
-screen -dmS playmouth.preview -L -Logfile daemon.log ./run.daemon
+screen -dmS playmouth.preview -L -Logfile daemon.log plymouthd --debug --no-daemon
 sleep 1
 
 echo -e "${Color}plymouth://process/show ${NoColor}"

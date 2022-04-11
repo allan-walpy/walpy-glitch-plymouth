@@ -1,3 +1,0 @@
-#!/bin/bash
-
-plymouthd --debug --no-daemon
