@@ -149,14 +149,9 @@ Window.SetBackgroundBottomColor(_bg.color.bottom.r, _bg.color.bottom.g , _bg.col
 
 #! --- bacground_image ---#
 
-fun get_bg_filename(i) {
-    r = i + ""; for (a = _get_length(i); a < _get_length(_bg.image.index.end + ""); a++) r = "0" + r;
-    return  _file.bg_image.prefix + r + _file.bg_image.postfix;
-}
-
 bg;
 
-bg.filename = get_bg_filename(_file.bg_image);
+bg.filename = _file.bg_image;
 bg.image = Image(bg.filename);
 bg.width = bg.image.GetWidth();
 bg.height = bg.image.GetHeight();
@@ -349,8 +344,21 @@ fun boot_progress_callback(duration, progression)
     update_progress_bar(duration, 0);
     update_progress_fill(progression, 0);
     update_progress_label(progression, 0);
+    if (duration > 2) quit_callback();
 }
 Plymouth.SetBootProgressFunction(boot_progress_callback);
+
+fun quit_callback()
+{
+    _debug("quit");
+    bg.opacity = 0; draw_bg();
+    progress.opacity = 0; draw_progress();
+    progress.bar.opacity = 0; draw_progress_state();
+    progress.state.opacity = 0; draw_progress_state();
+    progress.fill.opacity = 0; draw_progress_fill();
+    progress.label.opacity = 0; draw_progress_label();
+}
+Plymouth.SetQuitFunction(quit_callback);
 
 #!___ tmp ___!#
 
@@ -365,4 +373,3 @@ Plymouth.SetDisplayMessageFunction(dummy1);
 Plymouth.SetHideMessageFunction(dummy1);
 Plymouth.SetMessageFunction(dummy1);
 Plymouth.SetUpdateStatusFunction(dummy1);
-Plymouth.SetQuitFunction(dummy);
