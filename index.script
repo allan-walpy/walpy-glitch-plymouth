@@ -1,8 +1,9 @@
 #! --- image files --- #
 
-_file_logo = "logo.png";
-_file_bg_image = "background.png";
-_file_progress = "progress.png";
+_file;
+_file.logo = "logo.png";
+_file.bg_image = "background.png";
+_file.progress = "progress.png";
 
 #! --- global variables --- #
 
@@ -20,6 +21,9 @@ _text_color;
 _text_color.r = 0.8;
 _text_color.g = 0.8;
 _text_color.b = 0.8;
+_text_color.a = 1;
+
+_font = "Monospace 24";
 
 _screen_width = Window.GetWidth();
 _screen_height = Window.GetHeight();
@@ -34,15 +38,20 @@ _logo_z = 1;
 _progress_z = 5;
 _dbg_z = 100;
 
-_prg_bar_speed = 10;
-_prg_bar_txt_length = 27;
-_prg_bar_txt_bg = "-";
-_prg_bar_txt_strip = "#";
-_prg_bar_txt_strip_length = 4;
-_prg_bar_txt_color;
-_prg_bar_txt_color.r = 1;
-_prg_bar_txt_color.g = 1;
-_prg_bar_txt_color.b = 1;
+_prg_bar;
+_prg_bar.speed = 10;
+_prg_bar.scale = 2.5;
+_prg_bar.txt;
+_prg_bar.txt.length = 32;
+_prg_bar.txt.bg = "-";
+_prg_bar.txt.strip = "#";
+_prg_bar.txt.strip_length = 4;
+_prg_bar.txt.font = "Monospace 48";
+_prg_bar.txt.color;
+_prg_bar.txt.color.r = 1;
+_prg_bar.txt.color.g = 1;
+_prg_bar.txt.color.b = 1;
+_prg_bar.txt.color.a = 1;
 
 fun _get_center_x(width)  _screen_x + _screen_width / 2 - width / 2;
 fun _get_center_y(height) _screen_y + _screen_height / 2 - height / 2;
@@ -53,28 +62,31 @@ fun _get_right(width)     _screen_x + _screen_width - width;
 
 fun _draw_sprite(s, x, y, z, o) { s.SetPosition(x, y, z); s.SetOpacity(o); }
 fun _draw_image(i) _draw_sprite(i.sprite, i.x, i.y, i.z, i.opacity);
-fun _to_image(text, color) Image.Text(text, color.r, color.g, color.b);
+fun _to_image(text, color, font) Image.Text(text, color.r, color.g, color.b, color.a, font);
 fun _get_scale(width, height) Math.Max(_screen_width / width, _screen_height / height);
 
-_dbg; _dbg.sprite = Sprite(); _dbg.sprite.SetZ(_dbg_z);
-_dbg.color; _dbg.color.r = 1; _dbg.color.g = 1; _dbg.color.b = 1;
-fun _debug(text) _dbg.sprite.SetImage(_to_image(text, _text_color));
+#! --- debug --- #
 
-_dbg2; _dbg2.sprite = Sprite(); _dbg2.sprite.SetPosition(0, 32, _dbg_z);
-_dbg2.color; _dbg2.color.r = 1; _dbg2.color.g = 1; _dbg2.color.b = 1;
-fun _debug2(text) _dbg2.sprite.SetImage(_to_image(text, _text_color));
+_dbg; _dbg.font = _font; #!__ tmp;
+_dbg.color; _dbg.color.r = 1; _dbg.color.g = 1; _dbg.color.b = 1; _dbg.color.a = 1;
+
+_dbg.a; _dbg.a.sprite = Sprite(); _dbg.a.sprite.SetPosition(0, 0, _dbg_z);
+fun _debug1(text) _dbg.a.sprite.SetImage(_to_image(text, _dbg.color, _dbg.font));
+
+_dbg.b; _dbg.b.sprite = Sprite(); _dbg.b.sprite.SetPosition(0, 32, _dbg_z);
+fun _debug2(text) _dbg.b.sprite.SetImage(_to_image(text, _dbg.color, _dbg.font));
+
+fun _debug(text) _debug1(text);
 
 #! --- main set-ups --- #
 
 Window.SetBackgroundTopColor(_bg_color.top.r, _bg_color.top.g, _bg_color.top.b);
 Window.SetBackgroundBottomColor(_bg_color.bottom.r, _bg_color.bottom.g , _bg_color.bottom.b);
 
-#! --- bg_image ---#
-
-fun draw_bg() _draw_image(bg);
+#! --- bacground_image ---#
 
 bg;
-bg.image = Image(_file_bg_image);
+bg.image = Image(_file.bg_image);
 bg.scale = _get_scale(bg.image.GetWidth(), bg.image.GetHeight());
 bg.width = bg.image.GetWidth() * bg.scale;
 bg.height = bg.image.GetHeight() * bg.scale;
@@ -84,14 +96,14 @@ bg.y = _screen_y;
 bg.z = _bg_z;
 bg.opacity = 1;
 bg.sprite = Sprite(bg.image);
+
+fun draw_bg() _draw_image(bg);
 draw_bg();
 
 #! --- logo --- #
 
-fun draw_logo() _draw_image(logo);
-
 logo;
-logo.image = Image(_file_logo);
+logo.image = Image(_file.logo);
 logo.width = logo.image.GetWidth();
 logo.height = logo.image.GetHeight();
 logo.x = _get_center_x(logo.width);
@@ -99,14 +111,14 @@ logo.y = _get_bottom(logo.height) - _offcet * 2;
 logo.z = _logo_z;
 logo.opacity = 1;
 logo.sprite = Sprite(logo.image);
+
+fun draw_logo() _draw_image(logo);
 draw_logo();
 
 #! --- progress --- #
 
-fun draw_progress() _draw_image(progress);
-
 progress;
-progress.image = Image(_file_progress);
+progress.image = Image(_file.progress);
 progress.width = progress.image.GetWidth();
 progress.height = progress.image.GetHeight();
 progress.x = _get_center_x(progress.width);
@@ -114,16 +126,34 @@ progress.y = _get_center_y(progress.height);
 progress.z = _progress_z;
 progress.opacity = 1;
 progress.sprite = Sprite(progress.image);
+
+fun draw_progress() _draw_image(progress);
 draw_progress();
 
 #! --- ptogress;bar --- #
 
-fun draw_progress_bar() _draw_image(progress.bar);
+fun get_progress_bar_text(time) {
+    length = progress.bar.length;
+    strip_length = _prg_bar.txt.strip_length;
+    state = (time * _prg_bar.speed) % length;
+    _debug1(length + ":" + state + ":" + time);
+    _debug2(length + ":" + state + ":" + time);
+
+    r = ""; i = 0; l = 0;
+    for (i = 0 ; l < (length - state); l++)
+        r += _prg_bar.txt.bg;
+    for (i = 0; (i < strip_length) && (l < length); l++) i++ &&
+        r += _prg_bar.txt.strip;
+    for (i = 0; l < length; l++)
+        r += _prg_bar.txt.bg;
+
+    return r;
+}
 
 progress.bar;
-progress.bar.length = _prg_bar_txt_length;
-progress.bar.text = get_progress_bar_text(0);
-progress.bar.image = _to_image(progress.bar.text, _prg_bar_txt_color);
+progress.bar.length = _prg_bar.txt.length;
+progress.bar.text = get_progress_bar_text(0.01);
+progress.bar.image = _to_image(progress.bar.text, _prg_bar.txt.color, _prg_bar.txt.font);
 progress.bar.width = progress.bar.image.GetWidth();
 progress.bar.height = progress.bar.image.GetHeight();
 progress.bar.x = _get_center_x(progress.bar.width);
@@ -131,24 +161,9 @@ progress.bar.y = _get_center_y(progress.bar.height);
 progress.bar.z = _progress_z + 1;
 progress.bar.opacity = 1;
 progress.bar.sprite = Sprite(progress.bar.image);
+
+fun draw_progress_bar() _draw_image(progress.bar);
 draw_progress_bar();
-
-fun get_progress_bar_text(time) {
-    length = progress.bar.length;
-    strip_length = _prg_bar_txt_strip_length;
-    state = (time * _prg_bar_speed) % length;
-    _debug2(length + ":" + state + ":" + time);
-
-    r = ""; i = 0; l = 0;
-    for (i = 0 ; l < (length - state); l++)
-        r += _prg_bar_txt_bg;
-    for (i = 0; (i < strip_length) && (l < length); l++) i++ &&
-        r += _prg_bar_txt_strip;
-    for (i = 0; l < length; l++)
-        r += _prg_bar_txt_bg;
-
-    return r;
-}
 
 #! --- callback --- #
 
@@ -162,7 +177,7 @@ Plymouth.SetRefreshFunction(refresh_callback);
 
 fun boot_progress_callback(duration, progress)
 {
-    _debug(get_progress_bar_text(duration));
+    #! ---
 }
 Plymouth.SetBootProgressFunction(boot_progress_callback);
 
