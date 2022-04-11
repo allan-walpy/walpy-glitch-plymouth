@@ -53,8 +53,11 @@ _prg.offset;
 _prg.offset.x = 0;
 _prg.offset.y = -20;
 
+_prg.bg;
+_prg.bg.z = _progress_z;
+
 _prg.state;
-_prg.state.z = _progress_z + 1;
+_prg.state.z = _prg.bg.z + 1;
 _prg.state.offset;
 _prg.state.offset.x = _prg.offset.x + 0;
 _prg.state.offset.y = _prg.offset.y + 0;
@@ -123,7 +126,20 @@ _pass.z = _password_z;
 
 _pass.bg;
 _pass.bg.z = _pass.z;
-# ●●●●●●●●;
+
+_pass.bullets;
+_pass.bullets.offset;
+_pass.bullets.offset.x = 0;
+_pass.bullets.offset.y = 0;
+_pass.bullet.z = _pass.bg.z + 1;
+_pass.bullets.filler = "●";
+_pass.bullets.max_length = 32;
+_pass.bullets.font = "Monospace 36";
+_pass.bullets.color;
+_pass.bullets.color.r = 0;
+_pass.bullets.color.g = 0;
+_pass.bullets.color.b = 0;
+_pass.bullets.color.a = 1;
 
 _msg;
 _msg.z = _message_z;
@@ -141,7 +157,7 @@ fun _get_left(width)      _screen_x;
 fun _get_right(width)     _screen_x + _screen_width - width;
 
 fun _draw_sprite(s, x, y, z, o) { s.SetPosition(x, y, z); s.SetOpacity(o); }
-fun _draw_image(i) _draw_sprite(i.sprite, i.x, i.y, i.z, i.opacity);
+fun _draw_image(i) _draw_sprite(i.sprite, i.x, i.y, i.z, i.opacity); # TODO: addd resize;
 fun _to_image(text, color, font) Image.Text(text, color.r, color.g, color.b, color.a, font);
 fun _get_scale(width, height) Math.Max(_screen_width / width, _screen_height / height); #! TODO: not used;
 
@@ -195,7 +211,7 @@ logo.sprite = Sprite(logo.image);
 fun draw_logo() _draw_image(logo);
 draw_logo();
 
-#! --- progress --- #
+#! --- progress;bg --- #
 
 progress;
 progress.bg;
@@ -204,7 +220,7 @@ progress.bg.width = progress.bg.image.GetWidth();
 progress.bg.height = progress.bg.image.GetHeight();
 progress.bg.x = _get_center_x(progress.bg.width);
 progress.bg.y = _get_center_y(progress.bg.height);
-progress.bg.z = _progress_z;
+progress.bg.z = _prg.bg.z;
 progress.bg.opacity = 1;
 progress.bg.sprite = Sprite(progress.bg.image);
 
@@ -368,14 +384,14 @@ fun hide_progress_all() set_progress_all(0);
 
 fun dim_progress_all(opacity) set_progress_all(opacity);
 
-#! --- password --- #
+#! --- password;bg --- #
 
 password;
+password.bg;
 
 fun draw_password_bg() _draw_image(password.bg);
 
-fun set_password() {
-    password.bg;
+fun set_password_bg() {
     password.bg.image = Image(_file.password.bg);
     password.bg.width = password.bg.image.GetWidth();
     password.bg.height = password.bg.image.GetHeight();
@@ -387,8 +403,40 @@ fun set_password() {
     draw_password_bg();
 }
 
-# dim_progress_all(0.1);
-# set_password();
+dim_progress_all(0.1);
+set_password_bg();
+
+#! --- password;bullets --- #
+
+fun get_password_text(count)
+{
+    r = "";
+    for (i = 0; i < _pass.bullets.max_length; i++)
+        if (i < count) r += _pass.bullets.filler; else r += "-";
+    _debug2(r);
+    return r;
+}
+
+password.bullets;
+
+fun draw_password_bullets() _draw_image(password.bullets);
+
+fun set_password_bullets(count) {
+    local.b = password.bullets;
+    b.text = get_password_text(count);
+    b.image = _to_image(b.text, _pass.bullets.color, _pass.bullets.font);
+    b.width = b.image.GetWidth();
+    b.height = b.image.GetHeight();
+    b.x = _get_center_x(b.width) + _pass.bullets.offset.x;
+    b.y = _get_center_y(b.height) + _pass.bullets.offset.y;
+    b.z = _pass.bullet.z;
+    b.opacity = 1;
+    b.sprite = Sprite(b.image);
+    draw_password_bullets();
+}
+
+set_password_bullets(5);
+
 
 #! --- message;system --- #
 
