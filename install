@@ -1,0 +1,6 @@
+#!/bin/bash
+
+./clear
+
+rm -f -r /usr/share/plymouth/themes/walpy-glitch/
+cp -r . /usr/share/plymouth/themes/walpy-glitch

@@ -40,6 +40,7 @@ exit 0
 # sudo update-alternatives --config default.plymouth
 # sudo update-initramfs -u
 # plymouthd --no-daemon --debug
+# sudo update-alternatives --remove default.plymouth /path/folder/theme/to/uninstall/file-theme.plymouth
 
 # `Transition` config in `two-step` animation piece code from https://gitlab.freedesktop.org/plymouth/plymouth
 #  if (strcmp (transition, "fade-over") == 0)

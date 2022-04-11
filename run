@@ -1,12 +1,9 @@
 #!/bin/bash
 
-./clear
-
 Color='\033[0;33m'
 NoColor='\033[0m'
 
-rm -f -r /usr/share/plymouth/themes/walpy-glitch/
-cp -r ./ /usr/share/plymouth/themes/walpy-glitch
+./install
 
 screen -dmS playmouth.preview -L -Logfile daemon.log plymouthd --debug --no-daemon
 sleep 1

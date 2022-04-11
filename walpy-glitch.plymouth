@@ -5,4 +5,4 @@ ModuleName=script
 
 [script]
 ImageDir=/usr/share/plymouth/themes/walpy-glitch
-ScriptFile=/usr/share/plymouth/themes/walpy-glitch/index.script
+ScriptFile=/usr/share/plymouth/themes/walpy-glitch/walpy-glitch.script
