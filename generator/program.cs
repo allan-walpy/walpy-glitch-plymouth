@@ -141,13 +141,11 @@ for (int i = 0; i < frames; i++, index++)
                                 Convert.ToUInt16(random.Next(color_value_min, color_value_max)),
                                 Convert.ToUInt16(random.Next(color_value_min, color_value_max)));
             }
-        string a = Path.Combine(directory, $"{initial_prefix}-{index.ToString(filename_digits)}.png");
-        string b = Path.Combine(directory, $"{final_prefix}-{index.ToString(filename_digits)}.png");
-        if (do_save_initial) image.SaveAsPng(a, encoder);
+        if (do_save_initial) image.SaveAsPng(Path.Combine(directory, $"{initial_prefix}-{index.ToString(filename_digits)}.png"), encoder);
         if (do_save_final)
         {
             image.Mutate(x => x.Resize(options));
-            image.SaveAsPng(b, encoder);
+            image.SaveAsPng(Path.Combine(directory, $"{final_prefix}-{index.ToString(filename_digits)}.png"), encoder);
         }
     }
 }
