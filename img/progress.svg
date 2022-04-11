@@ -13,6 +13,11 @@
             font-size: 8px;
             font-weight: 300;
         }
+        .tmp_label {
+            font-family:"Roboto Mono", monospace;
+            font-size: 11px;
+            font-weight: 500;
+        }
     </style>
     <g id="progress" opacity="1">
         <rect id="window"
@@ -40,6 +45,19 @@
         <rect id="terminal"
             x="32" y="32" width="256" height="32" rx="4"
             fill="#111" opacity="1"  />
+
+        <text id="tmp_progress_line_1" class="tmp_label"
+            x="34" y="41" fill="#fff">
+            &lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;
+        </text>
+        <text id="tmp_progress_line_2" class="tmp_label"
+            x="34" y="52" fill="#fff">
+            -&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;
+        </text>
+        <text id="tmp_progress_line_3" class="tmp_label"
+            x="34" y="63" fill="#fff">
+            --&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--
+        </text>
     </g>
 
 </svg>

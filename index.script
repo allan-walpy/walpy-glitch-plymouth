@@ -29,7 +29,6 @@ _screen_width = Window.GetWidth();
 _screen_height = Window.GetHeight();
 _screen_x = Window.GetX();
 _screen_y = Window.GetY();
-_screen_ration = _screen_width / _screen_height;
 
 _offcet = Math.Int(_screen_width / 84);
 
@@ -43,6 +42,9 @@ _prg_bar.speed = 9.0;
 _prg_bar.scale = 2.5;
 _prg_bar.txt;
 _prg_bar.txt.length = 39;
+_prg_bar.txt.offset;
+_prg_bar.txt.offset.x = 0;
+_prg_bar.txt.offset.y = -20;
 _prg_bar.txt.bg = "-";
 _prg_bar.txt.strip = "<";
 _prg_bar.txt.strip_length = 2;
@@ -87,20 +89,20 @@ Window.SetBackgroundBottomColor(_bg_color.bottom.r, _bg_color.bottom.g , _bg_col
 
 #! --- bacground_image ---#
 
-# bg;
-# bg.image = Image(_file.bg_image);
-# bg.scale = _get_scale(bg.image.GetWidth(), bg.image.GetHeight());
-# bg.width = bg.image.GetWidth() * bg.scale;
-# bg.height = bg.image.GetHeight() * bg.scale;
-# bg.image = bg.image.Scale(bg.width, bg.height);
-# bg.x = _screen_x;
-# bg.y = _screen_y;
-# bg.z = _bg_z;
-# bg.opacity = 1;
-# bg.sprite = Sprite(bg.image);
+bg;
+bg.image = Image(_file.bg_image);
+bg.scale = _get_scale(bg.image.GetWidth(), bg.image.GetHeight());
+bg.width = bg.image.GetWidth() * bg.scale;
+bg.height = bg.image.GetHeight() * bg.scale;
+bg.image = bg.image.Scale(bg.width, bg.height);
+bg.x = _screen_x;
+bg.y = _screen_y;
+bg.z = _bg_z;
+bg.opacity = 1;
+bg.sprite = Sprite(bg.image);
 
-# fun draw_bg() _draw_image(bg);
-# draw_bg();
+fun draw_bg() _draw_image(bg);
+draw_bg();
 
 #! --- logo --- #
 
@@ -144,7 +146,6 @@ fun get_progress_bar_text(time) {
 
     mod_length = s_length + spacing;
     shift = (time * _prg_bar.speed) % mod_length;
-    _debug2(length + ":" + shift + ":" + time);
 
     r = ""; mod = 0;
     for (i = 0; i < length; i++)
@@ -164,8 +165,8 @@ progress.bar;
 fun set_progress_bar() {
     progress.bar.width = progress.bar.image.GetWidth();
     progress.bar.height = progress.bar.image.GetHeight();
-    progress.bar.x = _get_center_x(progress.bar.width);
-    progress.bar.y = _get_center_y(progress.bar.height);
+    progress.bar.x = _get_center_x(progress.bar.width) + _prg_bar.txt.offset.x;
+    progress.bar.y = _get_center_y(progress.bar.height) + _prg_bar.txt.offset.y;
     progress.bar.z = _progress_z + 1;
     progress.bar.opacity = 1;
 }
@@ -183,20 +184,76 @@ fun update_progress_bar(time, do_set) {
 update_progress_bar(0.0, 1);
 draw_progress_bar();
 
+#!__ tmp 1;
+
+progress.bar2;
+
+fun set_progress_bar2() {
+    progress.bar2.width = progress.bar2.image.GetWidth();
+    progress.bar2.height = progress.bar2.image.GetHeight();
+    progress.bar2.x = _get_center_x(progress.bar2.width) + _prg_bar.txt.offset.x;
+    progress.bar2.y = _get_center_y(progress.bar2.height) + _prg_bar.txt.offset.y + 64;
+    progress.bar2.z = _progress_z + 2;
+    progress.bar2.opacity = 1;
+}
+
+fun draw_progress_bar2() _draw_image(progress.bar2);
+
+fun update_progress_bar2(time, do_set) {
+    progress.bar2.text = get_progress_bar_text(time);
+    progress.bar2.image = _to_image(progress.bar2.text, _prg_bar.txt.color, _prg_bar.txt.font);
+    if (do_set) set_progress_bar2();
+    progress.bar2.sprite = Sprite(progress.bar2.image);
+    draw_progress_bar2();
+}
+
+update_progress_bar2(0.0, 1);
+draw_progress_bar2();
+
+#!___ tmp 2;
+
+progress.bar3;
+
+fun set_progress_bar3() {
+    progress.bar3.width = progress.bar3.image.GetWidth();
+    progress.bar3.height = progress.bar3.image.GetHeight();
+    progress.bar3.x = _get_center_x(progress.bar3.width) + _prg_bar.txt.offset.x;
+    progress.bar3.y = _get_center_y(progress.bar3.height) + _prg_bar.txt.offset.y + 64 * 2;
+    progress.bar3.z = _progress_z + 2;
+    progress.bar3.opacity = 1;
+}
+
+fun draw_progress_bar3() _draw_image(progress.bar3);
+
+fun update_progress_bar3(time, do_set) {
+    progress.bar3.text = get_progress_bar_text(time);
+    progress.bar3.image = _to_image(progress.bar3.text, _prg_bar.txt.color, _prg_bar.txt.font);
+    if (do_set) set_progress_bar3();
+    progress.bar3.sprite = Sprite(progress.bar3.image);
+    draw_progress_bar3();
+}
+
+update_progress_bar3(0.0, 1);
+draw_progress_bar3();
+
 #! --- callback --- #
 
 fun refresh_callback()
 {
-    #draw_bg();
+    draw_bg();
     draw_logo();
     draw_progress();
     draw_progress_bar();
+    draw_progress_bar2();
+    draw_progress_bar3();
 }
 Plymouth.SetRefreshFunction(refresh_callback);
 
 fun boot_progress_callback(duration, progress)
 {
     update_progress_bar(duration, 0);
+    update_progress_bar2(duration + 1 / _prg_bar.speed, 0);
+    update_progress_bar3(duration + 2 / _prg_bar.speed, 0);
 }
 Plymouth.SetBootProgressFunction(boot_progress_callback);
 
