@@ -17,7 +17,7 @@ const string arg_name_initial_height = "--height-initial";
 const string arg_name_final_width = "--width-final";
 const string arg_name_final_height = "--height-final";
 const string arg_name_glitchiness = "--glitch";
-const string arg_name_start_index = " --index";
+const string arg_name_start_index = "--index";
 const string arg_name_color_value_min = "--color-min-value";
 const string arg_name_color_value_max = "--color-max-value";
 const string arg_name_prefix_final = "--final-prefix-name";
@@ -123,7 +123,8 @@ Random random = new Random();
 
 for (int i = 0; i < frames; i++, index++)
 {
-    if (frames < 32 || i % (frames / 32) == 0) Console.WriteLine($"process://frame --number #{i}");
+    if (frames < 32 || i % ((frames / 32) + 1) == 0) Console.WriteLine($"process://frame --number #" +
+        $"{((frames < 32) || (i == frames - 1) ? index.ToString(filename_digits) : index.ToString(filename_digits) + "-" + (Math.Min(index + (frames / 32), index + frames - 2)).ToString(filename_digits))}");
     using (Image<Rgba64> image = new Image<Rgba64>(initial_width, initial_height))
     {
         for (int x = 0; x < initial_width; x++)
