@@ -18,5 +18,5 @@ sleep 1
 
 echo -e "${Color}plymouth://process/hide ${NoColor}"
 plymouth --hide-splash
-plymouth --quit && killall plymouthd || true
+plymouth --quit || killall plymouthd || true
 echo -e "${Color}plymouth://done ${NoColor}"
