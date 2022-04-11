@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- created by allan_walpy in vscode; licensed under mit;-->
-<svg xmlns="http://www.w3.org/2000/svg" width="320" height="180">
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="80">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100;200;300;400;500;600;700');
         .button {
@@ -16,8 +16,11 @@
     </style>
     <g id="progress" opacity="1">
         <rect id="window"
-            x="30" y="16" width="260" height="150" rx="4"
+            x="30" y="16" width="260" height="50" rx="4"
             fill="#eee" opacity="1"/>
+
+        <text id="window_label" class="label"
+            x="34" y="26" fill="#333">asylum://digital &lt;&lt; allan_walpy</text>
 
         <circle id="button_one"
             cx="278" cy="16" r="8"
@@ -35,11 +38,8 @@
         <text class="button" x="230" y="20" fill="#eee">0</text>
 
         <rect id="terminal"
-            x="32" y="32" width="256" height="132" rx="4"
+            x="32" y="32" width="256" height="32" rx="4"
             fill="#111" opacity="1"  />
-
-        <text id="window_label" class="label"
-            x="34" y="26" fill="#333">asylum://digital &lt;&lt; allan_walpy</text>
     </g>
 
 </svg>
