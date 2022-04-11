@@ -5,7 +5,7 @@ NoColor='\033[0m'
 
 ./install || exit 1
 
-screen -dmS playmouth.preview -L -Logfile daemon.log plymouthd --debug --no-daemon
+screen -dmS playmouth.preview -L -Logfile daemon.log plymouthd --debug --no-daemon --tty=`tty`
 sleep 1
 
 echo -e "${Color}plymouth://process/show ${NoColor}"

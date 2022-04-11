@@ -52,6 +52,7 @@ _prg;
 _prg.offset;
 _prg.offset.x = 0;
 _prg.offset.y = -20;
+_prg.dim = 0.3;
 
 _prg.bg;
 _prg.bg.z = _progress_z;
@@ -389,8 +390,6 @@ fun dim_progress_all(opacity) set_progress_all(opacity);
 password;
 password.bg;
 
-fun draw_password_bg() _draw_image(password.bg);
-
 fun set_password_bg() {
     password.bg.image = Image(_file.password.bg);
     password.bg.width = password.bg.image.GetWidth();
@@ -398,13 +397,13 @@ fun set_password_bg() {
     password.bg.x = _get_center_x(password.bg.width);
     password.bg.y = _get_center_y(password.bg.height);
     password.bg.z = _pass.bg.z;
-    password.bg.opacity = 1;
+    password.bg.opacity = 0;
     password.bg.sprite = Sprite(password.bg.image);
-    draw_password_bg();
 }
 
-dim_progress_all(0.1);
-set_password_bg();
+fun draw_password_bg() _draw_image(password.bg);
+fun show_password_bg() { password.bg.opacity = 1; draw_password_bg(); }
+fun hide_password_bg() { password.bg.opacity = 0; draw_password_bg(); }
 
 #! --- password;bullets --- #
 
@@ -419,7 +418,7 @@ fun get_password_text(count)
 
 password.bullets;
 
-fun draw_password_bullets() _draw_image(password.bullets);
+
 
 fun set_password_bullets(count) {
     password.bullets.text = get_password_text(count);
@@ -429,12 +428,22 @@ fun set_password_bullets(count) {
     password.bullets.x = _get_center_x(password.bullets.width) + _pass.bullets.offset.x;
     password.bullets.y = _get_center_y(password.bullets.height) + _pass.bullets.offset.y;
     password.bullets.z = _pass.bullet.z;
-    password.bullets.opacity = 1;
+    password.bullets.opacity = 0;
     password.bullets.sprite = Sprite(password.bullets.image);
     draw_password_bullets();
 }
 
-set_password_bullets(5);
+fun draw_password_bullets() _draw_image(password.bullets);
+fun show_password_bullets() { password.bullets.opacity = 1; draw_password_bullets(); }
+fun hide_password_bullets() { password.bullets.opacity = 1; draw_password_bullets(); }
+
+fun show_password(bullets) {
+    if (password.bg) set_password_bg();
+    show_password_bg();
+    set_password_bullets(bullets);
+    show_password_bullets();
+}
+
 
 
 #! --- message;system --- #
@@ -468,6 +477,14 @@ fun boot_progress_callback(duration, progression)
 }
 Plymouth.SetBootProgressFunction(boot_progress_callback);
 
+fun display_password_callback(prompt, bullets)
+{
+    dim_progress_all(_prg.dim);
+    show_password(bullets);
+    _debug1(prompt + " / " + bullets);
+}
+Plymouth.SetDisplayPasswordFunction(display_password_callback);
+
 fun quit_callback()
 {
     bg.opacity = 0; draw_bg();
@@ -490,7 +507,7 @@ Plymouth.SetDisplayNormalFunction(dummy);
 Plymouth.SetDisplayQuestionFunction(dummy2);
 Plymouth.SetDisplayMessageFunction(dummy1);
 Plymouth.SetHideMessageFunction(dummy1);
-Plymouth.SetDisplayPasswordFunction(dummy2);
+
 Plymouth.SetMessageFunction(dummy1);
 Plymouth.SetUpdateStatusFunction(dummy1); # * for debug;
 # * Plymouth.SetKeyboardInputFunction;

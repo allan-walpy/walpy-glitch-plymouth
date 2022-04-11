@@ -2,6 +2,10 @@
 
 sleep 3
 
+plymouth ask-for-password --prompt "specify password: " | ./test.reader --read-from-stdin
+
+sleep 3
+
 exit 0
 
 # test disk scan
