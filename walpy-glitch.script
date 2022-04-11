@@ -130,11 +130,11 @@ _pass.bg.z = _pass.z;
 _pass.bullets;
 _pass.bullets.offset;
 _pass.bullets.offset.x = 0;
-_pass.bullets.offset.y = 0;
+_pass.bullets.offset.y = 32;
 _pass.bullet.z = _pass.bg.z + 1;
 _pass.bullets.filler = "●";
-_pass.bullets.max_length = 32;
-_pass.bullets.font = "Monospace 36";
+_pass.bullets.max_length = 20;
+_pass.bullets.font = "Monospace 72";
 _pass.bullets.color;
 _pass.bullets.color.r = 0;
 _pass.bullets.color.g = 0;
@@ -412,7 +412,7 @@ fun get_password_text(count)
 {
     r = "";
     for (i = 0; i < _pass.bullets.max_length; i++)
-        if (i < count) r += _pass.bullets.filler; else r += "-";
+        if (i < count) r += _pass.bullets.filler; else r += " ";
     _debug2(r);
     return r;
 }
@@ -422,16 +422,15 @@ password.bullets;
 fun draw_password_bullets() _draw_image(password.bullets);
 
 fun set_password_bullets(count) {
-    local.b = password.bullets;
-    b.text = get_password_text(count);
-    b.image = _to_image(b.text, _pass.bullets.color, _pass.bullets.font);
-    b.width = b.image.GetWidth();
-    b.height = b.image.GetHeight();
-    b.x = _get_center_x(b.width) + _pass.bullets.offset.x;
-    b.y = _get_center_y(b.height) + _pass.bullets.offset.y;
-    b.z = _pass.bullet.z;
-    b.opacity = 1;
-    b.sprite = Sprite(b.image);
+    password.bullets.text = get_password_text(count);
+    password.bullets.image = _to_image(password.bullets.text, _pass.bullets.color, _pass.bullets.font);
+    password.bullets.width = password.bullets.image.GetWidth();
+    password.bullets.height = password.bullets.image.GetHeight();
+    password.bullets.x = _get_center_x(password.bullets.width) + _pass.bullets.offset.x;
+    password.bullets.y = _get_center_y(password.bullets.height) + _pass.bullets.offset.y;
+    password.bullets.z = _pass.bullet.z;
+    password.bullets.opacity = 1;
+    password.bullets.sprite = Sprite(password.bullets.image);
     draw_password_bullets();
 }
 
