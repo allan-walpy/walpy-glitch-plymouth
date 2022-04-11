@@ -76,8 +76,24 @@ fun refresh_callback()
 }
 Plymouth.SetRefreshFunction(refresh_callback);
 
-fun process_callback()
+fun process_callback(duration, progress)
 {
 
 }
 Plymouth.SetBootProgressFunction(progress_callback);
+
+#!___ tmp ___!#
+
+fun dummy() {}
+fun dummy1(a) {}
+fun dummy2(a, b) {}
+
+Plymouth.SetBootProgressFunction(dummy2);
+Plymouth.SetDisplayNormalFunction(dummy);
+Plymouth.SetDisplayQuestionFunction(dummy2);
+Plymouth.SetDisplayPasswordFunction(dummy2);
+Plymouth.SetDisplayMessageFunction(dummy1);
+Plymouth.SetHideMessageFunction(dummy1);
+Plymouth.SetMessageFunction(dummy1);
+Plymouth.SetUpdateStatusFunction(dummy1);
+Plymouth.SetQuitFunction(dummy);
