@@ -42,7 +42,7 @@ _prg_bar;
 _prg_bar.speed = 10;
 _prg_bar.scale = 2.5;
 _prg_bar.txt;
-_prg_bar.txt.length = 32;
+_prg_bar.txt.length = 39;
 _prg_bar.txt.bg = "-";
 _prg_bar.txt.strip = "#";
 _prg_bar.txt.strip_length = 4;
@@ -133,10 +133,9 @@ draw_progress();
 #! --- ptogress;bar --- #
 
 fun get_progress_bar_text(time) {
-    length = progress.bar.length;
+    length = _prg_bar.txt.length;
     strip_length = _prg_bar.txt.strip_length;
     state = (time * _prg_bar.speed) % length;
-    _debug1(length + ":" + state + ":" + time);
     _debug2(length + ":" + state + ":" + time);
 
     r = ""; i = 0; l = 0;
@@ -151,18 +150,27 @@ fun get_progress_bar_text(time) {
 }
 
 progress.bar;
-progress.bar.length = _prg_bar.txt.length;
-progress.bar.text = get_progress_bar_text(0.01);
-progress.bar.image = _to_image(progress.bar.text, _prg_bar.txt.color, _prg_bar.txt.font);
-progress.bar.width = progress.bar.image.GetWidth();
-progress.bar.height = progress.bar.image.GetHeight();
-progress.bar.x = _get_center_x(progress.bar.width);
-progress.bar.y = _get_center_y(progress.bar.height);
-progress.bar.z = _progress_z + 1;
-progress.bar.opacity = 1;
-progress.bar.sprite = Sprite(progress.bar.image);
+
+fun set_progress_bar() {
+    progress.bar.width = progress.bar.image.GetWidth();
+    progress.bar.height = progress.bar.image.GetHeight();
+    progress.bar.x = _get_center_x(progress.bar.width);
+    progress.bar.y = _get_center_y(progress.bar.height);
+    progress.bar.z = _progress_z + 1;
+    progress.bar.opacity = 1;
+}
 
 fun draw_progress_bar() _draw_image(progress.bar);
+
+fun update_progress_bar(time, do_set) {
+    progress.bar.text = get_progress_bar_text(time);
+    progress.bar.image = _to_image(progress.bar.text, _prg_bar.txt.color, _prg_bar.txt.font);
+    if (do_set) set_progress_bar();
+    progress.bar.sprite = Sprite(progress.bar.image);
+    draw_progress_bar();
+}
+
+update_progress_bar(0.01, 1);
 draw_progress_bar();
 
 #! --- callback --- #
@@ -177,7 +185,7 @@ Plymouth.SetRefreshFunction(refresh_callback);
 
 fun boot_progress_callback(duration, progress)
 {
-    #! ---
+    # update_progress_bar(duration, 0);
 }
 Plymouth.SetBootProgressFunction(boot_progress_callback);
 
