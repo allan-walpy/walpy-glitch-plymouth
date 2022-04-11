@@ -30,9 +30,9 @@ _bg.image;
 _bg.image.z = _bg_z;
 _bg.image.index;
 _bg.image.index.start = 1;
-_bg.image.index.end = 13;
+_bg.image.index.end = 3;
 _bg.image.count = _bg.image.index.end - _bg.image.index.start + 1;
-_bg.image.delay = 50;
+_bg.image.delay = 100;
 
 _text_color;
 _text_color.r = 0.8;
@@ -145,42 +145,35 @@ fun get_bg_filename(i) {
 }
 
 bg;
+
 bg.index = _bg.image.index.start;
-bg.filename = get_bg_filename(bg.index);
-bg.image = Image(bg.filename);
-bg.width = bg.image.GetWidth();
-bg.height = bg.image.GetHeight();
-bg.x = _screen_x;
-bg.y = _screen_y;
-bg.z = _bg_z;
-bg.opacity = 1;
-bg.sprite = Sprite(bg.image);
 
-fun bg_next()
+fun set_bg()
 {
-    bg.index++; if (bg.index > _bg.image.index.end) bg.index = _bg.image.index.start;
-    bg.filename = get_bg_filename(bg.index);
-    bg.image = Image(bg.filename);
-    bg.sprite = Sprite(bg.image);
-
-    #! tmp;
-
-    color = Math.Random(); if (color > 0.5) color = -1 * color / 2; color = color /  10;
-    Window.SetBackgroundTopColor(_bg.color.top.r + color, _bg.color.top.g + color, _bg.color.top.b + color);
-    Window.SetBackgroundBottomColor(_bg.color.bottom.r + color, _bg.color.bottom.g + color , _bg.color.bottom.b + color);
+    bg.width = bg.image.GetWidth();
+    bg.height = bg.image.GetHeight();
+    bg.x = _screen_x;
+    bg.y = _screen_y;
+    bg.z = _bg.image.z;
+    bg.opacity = 1;
 }
 
 fun draw_bg() _draw_image(bg);
-draw_bg();
 
-fun bg_on_new_tick(ticks)
+fun bg_update(is_set)
 {
-    _debug1(ticks);
-    if (ticks % _bg.image.delay != 0) return;
-    _debug2(bg.index);
-
-    bg_next();
+    bg.filename = get_bg_filename(bg.index);
+    bg.image = Image(bg.filename);
+    if (is_set) set_bg();
+    bg.sprite = Sprite(bg.image);
+    draw_bg();
 }
+
+bg_update(1);
+
+fun bg_next() { bg.index++; if (bg.index > _bg.image.index.end) bg.index = _bg.image.index.start; bg_update(0); }
+
+fun bg_on_new_tick(ticks) if (ticks % _bg.image.delay != 0) bg_next();
 
 #! --- logo --- #
 
