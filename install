@@ -2,5 +2,12 @@
 
 ./clear
 
-rm -f -r /usr/share/plymouth/themes/walpy-glitch/
-cp -r . /usr/share/plymouth/themes/walpy-glitch
+rm -f -r /usr/share/plymouth/themes/walpy-glitch/*
+
+mkdir -p /usr/share/plymouth/themes/walpy-glitch/
+
+cp *.script /usr/share/plymouth/themes/walpy-glitch/
+cp *.plymouth /usr/share/plymouth/themes/walpy-glitch/
+cp *.png /usr/share/plymouth/themes/walpy-glitch/
+
+cp license /usr/share/plymouth/themes/walpy-glitch/license.txt
