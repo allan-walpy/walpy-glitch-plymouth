@@ -5,13 +5,16 @@ _file.logo = "logo.png";
 _file.bg_image = "background.png";
 _file.progress = "progress.png";
 _file.system_message = "message.system.png";
+_file.password;
+_file.password.bg = "password.png";
 
 #! --- global variables --- #
 
 _bg_z = 0;
-_logo_z = 1;
+_logo_z = 3;
 _progress_z = 5;
 _message_z = 10;
+_password_z = 15;
 _dbg_z = 100;
 
 _bg;
@@ -114,6 +117,13 @@ _prg.label.color.r = 1;
 _prg.label.color.g = 1;
 _prg.label.color.b = 1;
 _prg.label.color.a = 1;
+
+_pass;
+_pass.z = _password_z;
+
+_pass.bg;
+_pass.bg.z = _pass.z;
+
 
 _msg;
 _msg.z = _message_z;
@@ -357,7 +367,25 @@ fun hide_progress_all() set_progress_all(0);
 
 #! --- password --- #
 
+password;
 
+fun draw_password_bg() _draw_image(password.bg);
+
+fun set_password() {
+    password.bg;
+    password.bg.image = Image(_file.password.bg);
+    password.bg.width = password.bg.image.GetWidth();
+    password.bg.height = password.bg.image.GetHeight();
+    password.bg.x = _get_center_x(password.bg.width);
+    password.bg.y = _get_center_y(password.bg.height);
+    password.bg.z = _pass.bg.z;
+    password.bg.opacity = 1;
+    password.bg.sprite = Sprite(password.bg.image);
+    draw_password_bg();
+}
+
+hide_progress_all();
+set_password();
 
 #! --- message;system --- #
 
