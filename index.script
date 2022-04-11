@@ -39,14 +39,15 @@ _progress_z = 5;
 _dbg_z = 100;
 
 _prg_bar;
-_prg_bar.speed = 10;
+_prg_bar.speed = 9.0;
 _prg_bar.scale = 2.5;
 _prg_bar.txt;
 _prg_bar.txt.length = 39;
 _prg_bar.txt.bg = "-";
 _prg_bar.txt.strip = "<";
 _prg_bar.txt.strip_length = 2;
-_prg_bar.txt.strip_direction = 0; # 1 -to left ☭; 0 - to right;
+_prg_bar.txt.strip_direction = 1; # 1 -to left ☭; 0 - to right;
+_prg_bar.txt.strip_spacing = 3;
 _prg_bar.txt.font = "Monospace 48";
 _prg_bar.txt.color;
 _prg_bar.txt.color.r = 1;
@@ -137,16 +138,19 @@ fun get_progress_bar_text(time) {
     local.length = _prg_bar.txt.length;
     local.s_length = _prg_bar.txt.strip_length;
     local.direction = _prg_bar.txt.strip_direction;
+    local.spacing = _prg_bar.txt.strip_spacing;
     local.bg = _prg_bar.txt.bg;
     local.s = _prg_bar.txt.strip;
 
-    state = (time * _prg_bar.speed) % length;
-    _debug2(length + ":" + state + ":" + time);
+    mod_length = s_length + spacing;
+    shift = (time * _prg_bar.speed) % mod_length;
+    _debug2(length + ":" + shift + ":" + time);
 
-    r = "";
+    r = ""; mod = 0;
     for (i = 0; i < length; i++)
     {
-        if ((i > length - state) && (i < length - state + s_length))
+        mod = (shift + i) % (spacing + s_length);
+        if (mod >= spacing)
             if (direction) r += s; else r = s + r;
         else
             if (direction) r += bg; else r = bg + r;
