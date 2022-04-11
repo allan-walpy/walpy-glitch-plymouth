@@ -1,6 +1,7 @@
 *.log
 bin/
 obj/
+out/
 frames-*/
 */.vscode
 hide/

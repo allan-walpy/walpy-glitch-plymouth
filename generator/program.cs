@@ -72,7 +72,7 @@ if (arguments.Contains(arg_name_help))
 }
 
 Console.WriteLine(arguments.Aggregate<string, string>("process://parse --args <<", (r, x) => r + $" {x}"));
-string? GetArgValue(string key) => arguments?.ElementAtOrDefault(arguments?.IndexOf(key) + 1 ?? -1);
+string? GetArgValue(string key) => arguments.Contains(key) ? arguments.ElementAtOrDefault(arguments.IndexOf(key) + 1) : null;
 int GetArgValueInt(string key, int value) { int r; int.TryParse(GetArgValue(key) ?? value.ToString(), out r); return r; }
 UInt16 GetArgValueUInt16(string key, UInt16 value) { UInt16 r; UInt16.TryParse(GetArgValue(key) ?? value.ToString(), out r); return r; }
 double GetArgValueDouble(string key, double value) { double r; double.TryParse(GetArgValue(key) ?? value.ToString(), out r); return r; }
@@ -116,7 +116,6 @@ if (!do_save_final && !do_save_initial || frames <= 0) throw new ApplicationExce
     (frames <= 0) ? new Exception($"Argument \"{arg_name_frames}\" must be positive")
         : new Exception($"Argument \"{arg_name_save_final_not}\" cannot be used without \"{arg_name_save_initial}\""));
 
-Console.WriteLine("process://start");
 System.IO.Directory.CreateDirectory(directory);
 bool is_normal = false;
 ushort gray = 0;
