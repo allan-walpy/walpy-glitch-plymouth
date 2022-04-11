@@ -14,6 +14,7 @@ sleep 1
 echo -e "${Color}plymouth://process/show ${NoColor}"
 plymouth --show-splash
 ./test
+sleep 5
 
 echo -e "${Color}plymouth://process/hide ${NoColor}"
 plymouth --hide-splash
