@@ -61,10 +61,10 @@ _prg.bar.length = 39;
 _prg.bar.offset;
 _prg.bar.offset.x = _prg.offset.x + 0;
 _prg.bar.offset.y = _prg.offset.y + 64;
-_prg.bar.bg = "-";
+_prg.bar.bg = " ";
 _prg.bar.strip = "<";
 _prg.bar.strip_length = 2;
-_prg.bar.strip_direction = 1; # 1 -to left ☭; 0 - to right;
+_prg.bar.strip_direction = 1; # 1 - to left ☭; 0 - to right;
 _prg.bar.strip_spacing = 3;
 _prg.bar.font = "Monospace 48";
 _prg.bar.color;
@@ -92,10 +92,11 @@ _prg.label.z = _prg.fill.z + 1;
 _prg.label.offset;
 _prg.label.offset.x = _prg.offset.x + 0;
 _prg.label.offset.y = _prg.fill.offset.y;
+_prg.is_centered = 1;
 _prg.label.max_value = 256;
 _prg.label.max_length = 52;
-_prg.label.prefix = "root@digital_asylum:/$ boot -s ";
-_prg.label.postfix = " -m " + _prg.label.max_value;
+_prg.label.prefix = "%";
+_prg.label.postfix = "%";
 _prg.label.font = "Monospace 36";
 _prg.label.color;
 _prg.label.color.r = 1;
@@ -205,7 +206,7 @@ progress.sprite = Sprite(progress.image);
 fun draw_progress() _draw_image(progress);
 draw_progress();
 
-#! --- ptogress;bar --- #
+#! --- progress;bar --- #
 
 fun get_progress_bar_text(time) {
     local.length = _prg.bar.length;
@@ -293,7 +294,7 @@ fun get_progress_label_text (progression) {
     for (i = start; i < end; i++) number = "0" + number;
     r = _prg.label.prefix + number  + _prg.label.postfix;
     start = _get_length(r); end = _prg.label.max_length;
-    for (i = start; i < end; i ++) r = r + " ";
+    if (!_prg.is_centered) for (i = start; i < end; i ++) r = r + "-";
     return r;
 }
 
