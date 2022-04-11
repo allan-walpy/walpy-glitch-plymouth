@@ -4,12 +4,14 @@ _file;
 _file.logo = "logo.png";
 _file.bg_image = "background.png";
 _file.progress = "progress.png";
+_file.system_message = "message.system.png";
 
 #! --- global variables --- #
 
 _bg_z = 0;
 _logo_z = 1;
 _progress_z = 5;
+_message_z = 10;
 _dbg_z = 100;
 
 _bg;
@@ -112,6 +114,12 @@ _prg.label.color.r = 1;
 _prg.label.color.g = 1;
 _prg.label.color.b = 1;
 _prg.label.color.a = 1;
+
+_msg;
+_msg.z = _message_z;
+
+_msg.sys;
+_msg.sys.z = _msg.z;
 
 fun _get_length (string) { for (i = 0; String(string).CharAt(i); i++) { } return i; }
 
@@ -332,6 +340,43 @@ fun update_progress_label(progression, do_set) {
 
 update_progress_label(0.0, 1);
 
+#! --- progress;all --- #
+
+fun set_progress_all(opacity)
+{
+    progress.opacity = opacity; draw_progress();
+    progress.bar.opacity = opacity; draw_progress_state();
+    progress.state.opacity = opacity; draw_progress_state();
+    progress.fill.opacity = opacity; draw_progress_fill();
+    progress.label.opacity = opacity; draw_progress_label();
+}
+
+fun draw_progress_all() set_progress_all(1);
+
+fun hide_progress_all() set_progress_all(0);
+
+#! --- password --- #
+
+
+
+#! --- message;system --- #
+
+# message;
+
+# message.system;
+# message.system.image = Image(_file.system_message);
+# message.system.width = message.system.image.GetWidth();
+# message.system.height = message.system.image.GetHeight();
+# message.system.x = _get_center_x(message.system.width);
+# message.system.y = _get_top(message.system.height);
+# message.system.z = _msg.sys.z;
+# message.system.opacity = 0;
+# message.system.sprite = Sprite(message.system.image);
+
+# fun draw_message_system() { message.system.opacity = 1; _draw_image(message.system); }
+# fun hide_message_system() { message.system.opacity = 0; _draw_image(message.system); }
+# hide_message_system();
+
 #! --- callback --- #
 
 fun refresh_callback() g_ticks++;
@@ -345,17 +390,10 @@ fun boot_progress_callback(duration, progression)
 }
 Plymouth.SetBootProgressFunction(boot_progress_callback);
 
-fun root_mounted_callback() { _debug1("root mounted"); }
-Plymouth.SetRootMountedFunction(root_mounted_callback);
-
 fun quit_callback()
 {
     bg.opacity = 0; draw_bg();
-    progress.opacity = 0; draw_progress();
-    progress.bar.opacity = 0; draw_progress_state();
-    progress.state.opacity = 0; draw_progress_state();
-    progress.fill.opacity = 0; draw_progress_fill();
-    progress.label.opacity = 0; draw_progress_label();
+    hide_progress_all();
 }
 Plymouth.SetQuitFunction(quit_callback);
 
@@ -365,11 +403,16 @@ fun dummy() {}
 fun dummy1(a) {}
 fun dummy2(a, b) {}
 
+# fun root_mounted_callback() {
+#     draw_message_system();
+# }
+# Plymouth.SetRootMountedFunction(root_mounted_callback);
+
 Plymouth.SetDisplayNormalFunction(dummy);
 Plymouth.SetDisplayQuestionFunction(dummy2);
-Plymouth.SetDisplayPasswordFunction(dummy2);
 Plymouth.SetDisplayMessageFunction(dummy1);
 Plymouth.SetHideMessageFunction(dummy1);
+Plymouth.SetDisplayPasswordFunction(dummy2);
 Plymouth.SetMessageFunction(dummy1);
 Plymouth.SetUpdateStatusFunction(dummy1); # * for debug;
 # * Plymouth.SetKeyboardInputFunction;

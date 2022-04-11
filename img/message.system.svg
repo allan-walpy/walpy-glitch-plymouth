@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- created by allan_walpy in vscode; licensed under mit;-->
+<svg xmlns="http://www.w3.org/2000/svg" width="198" height="48">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100;200;300;400;500;600;700');
+        .button {
+            font-family: "Roboto Mono", monospace;
+            font-size: 12px;
+            font-weight: 300;
+        }
+        .label {
+            font-family:"Roboto Mono", monospace;
+            font-size: 8px;
+            font-weight: 300;
+        }
+    </style>
+    <g id="progress" opacity="1">
+        <rect id="window"
+            x="4" y="12" width="190" height="32" rx="4"
+            fill="#eee" opacity="1"/>
+
+        <text id="window_label" class="label"
+            x="8" y="22" fill="#333">asylum://digital --message system</text>
+
+        <circle id="button_one"
+            cx="182" cy="12" r="8"
+            fill="#48e" opacity="1" />
+        <text class="button" x="178" y="16" fill="#eee">!</text>
+
+        <rect id="terminal"
+            x="6" y="28" width="186" height="14" rx="4"
+            fill="#111" opacity="1" />
+    </g>
+
+</svg>
