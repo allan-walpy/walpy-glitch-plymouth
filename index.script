@@ -79,16 +79,19 @@ _prg.label;
 _prg.label.z = _prg.fill.z + 1;
 _prg.label.offset;
 _prg.label.offset.x = _prg.offset.x + 0;
-_prg.label.offset.y = _prg.fill.offset.y + 3;
+_prg.label.offset.y = _prg.fill.offset.y;
 _prg.label.max_value = 256;
-_prg.label.prefix = "process://loading --stage ";
-_prg.label.postfix = " --max " + _prg.label.max_value;
-_prg.label.font = "Monospace 24";
+_prg.label.max_length = 52;
+_prg.label.prefix = "root@digital_asylum:/$ boot -s ";
+_prg.label.postfix = " -m " + _prg.label.max_value;
+_prg.label.font = "Monospace 36";
 _prg.label.color;
 _prg.label.color.r = 1;
 _prg.label.color.g = 1;
 _prg.label.color.b = 1;
 _prg.label.color.a = 1;
+
+fun _get_length (string) { for (i = 0; String(string).CharAt(i); i++) { } return i; }
 
 fun _get_center_x(width)  _screen_x + _screen_width / 2 - width / 2;
 fun _get_center_y(height) _screen_y + _screen_height / 2 - height / 2;
@@ -249,7 +252,15 @@ update_progress_fill(0.0, 1);
 
 #! --- progress;filler;label; --- #
 
-fun get_progress_label_text (progression)  _prg.label.prefix + (Math.Int(progression * _prg.label.max_value))  + _prg.label.postfix;
+fun get_progress_label_text (progression) {
+    number = Math.Int(progression * _prg.label.max_value) + "";
+    start = _get_length(number); end = _get_length(_prg.label.max_value + "");
+    for (i = start; i < end; i++) number = "0" + number;
+    r = _prg.label.prefix + number  + _prg.label.postfix;
+    start = _get_length(r); end = _prg.label.max_length;
+    for (i = start; i < end; i ++) r = r + " ";
+    return r;
+}
 
 progress.label;
 
@@ -273,8 +284,6 @@ fun update_progress_label(progression, do_set) {
 }
 
 update_progress_label(0.0, 1);
-
-
 
 #! --- callback --- #
 
