@@ -85,20 +85,20 @@ Window.SetBackgroundBottomColor(_bg_color.bottom.r, _bg_color.bottom.g , _bg_col
 
 #! --- bacground_image ---#
 
-bg;
-bg.image = Image(_file.bg_image);
-bg.scale = _get_scale(bg.image.GetWidth(), bg.image.GetHeight());
-bg.width = bg.image.GetWidth() * bg.scale;
-bg.height = bg.image.GetHeight() * bg.scale;
-bg.image = bg.image.Scale(bg.width, bg.height);
-bg.x = _screen_x;
-bg.y = _screen_y;
-bg.z = _bg_z;
-bg.opacity = 1;
-bg.sprite = Sprite(bg.image);
+# bg;
+# bg.image = Image(_file.bg_image);
+# bg.scale = _get_scale(bg.image.GetWidth(), bg.image.GetHeight());
+# bg.width = bg.image.GetWidth() * bg.scale;
+# bg.height = bg.image.GetHeight() * bg.scale;
+# bg.image = bg.image.Scale(bg.width, bg.height);
+# bg.x = _screen_x;
+# bg.y = _screen_y;
+# bg.z = _bg_z;
+# bg.opacity = 1;
+# bg.sprite = Sprite(bg.image);
 
-fun draw_bg() _draw_image(bg);
-draw_bg();
+# fun draw_bg() _draw_image(bg);
+# draw_bg();
 
 #! --- logo --- #
 
@@ -177,7 +177,7 @@ draw_progress_bar();
 
 fun refresh_callback()
 {
-    draw_bg();
+    #draw_bg();
     draw_logo();
     draw_progress();
 }
