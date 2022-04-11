@@ -47,17 +47,16 @@
             fill="#111" opacity="1"  />
 
         <text id="tmp_progress_line_1" class="tmp_label"
-            x="34" y="41" fill="#fff">
-            &lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;
+            x="34" y="41" fill="#fff" opacity="1">
+            &lt;&lt;|--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;
         </text>
         <text id="tmp_progress_line_2" class="tmp_label"
-            x="34" y="52" fill="#fff">
-            -&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;
+            x="34" y="52" fill="#fff" opacity="1">
+            -&lt;&lt;|--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--
         </text>
-        <text id="tmp_progress_line_3" class="tmp_label"
-            x="34" y="63" fill="#fff">
-            --&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--
-        </text>
+
+        <rect id="tmp_progress_filler" x="32" y="56" width="256" height="8" rx="4"
+            fill="#2f4" opacity="1" />
     </g>
 
 </svg>
