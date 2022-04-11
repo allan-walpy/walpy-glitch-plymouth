@@ -123,7 +123,7 @@ _pass.z = _password_z;
 
 _pass.bg;
 _pass.bg.z = _pass.z;
-
+# ●●●●●●●●;
 
 _msg;
 _msg.z = _message_z;
@@ -198,17 +198,18 @@ draw_logo();
 #! --- progress --- #
 
 progress;
-progress.image = Image(_file.progress);
-progress.width = progress.image.GetWidth();
-progress.height = progress.image.GetHeight();
-progress.x = _get_center_x(progress.width);
-progress.y = _get_center_y(progress.height);
-progress.z = _progress_z;
-progress.opacity = 1;
-progress.sprite = Sprite(progress.image);
+progress.bg;
+progress.bg.image = Image(_file.progress);
+progress.bg.width = progress.bg.image.GetWidth();
+progress.bg.height = progress.bg.image.GetHeight();
+progress.bg.x = _get_center_x(progress.bg.width);
+progress.bg.y = _get_center_y(progress.bg.height);
+progress.bg.z = _progress_z;
+progress.bg.opacity = 1;
+progress.bg.sprite = Sprite(progress.bg.image);
 
-fun draw_progress() _draw_image(progress);
-draw_progress();
+fun draw_progress_bg() _draw_image(progress.bg);
+draw_progress_bg();
 
 #! --- progress;state --- #
 
@@ -354,7 +355,7 @@ update_progress_label(0.0, 1);
 
 fun set_progress_all(opacity)
 {
-    progress.opacity = opacity; draw_progress();
+    progress.bg.opacity = opacity; draw_progress_bg();
     progress.bar.opacity = opacity; draw_progress_state();
     progress.state.opacity = opacity; draw_progress_state();
     progress.fill.opacity = opacity; draw_progress_fill();
@@ -364,6 +365,8 @@ fun set_progress_all(opacity)
 fun draw_progress_all() set_progress_all(1);
 
 fun hide_progress_all() set_progress_all(0);
+
+fun dim_progress_all(opacity) set_progress_all(opacity);
 
 #! --- password --- #
 
@@ -384,8 +387,8 @@ fun set_password() {
     draw_password_bg();
 }
 
-hide_progress_all();
-set_password();
+# dim_progress_all(0.1);
+# set_password();
 
 #! --- message;system --- #
 
