@@ -138,8 +138,6 @@ fun _debug1(text) _dbg.a.sprite.SetImage(_to_image(text, _dbg.color, _dbg.font))
 _dbg.b; _dbg.b.sprite = Sprite(); _dbg.b.sprite.SetPosition(0, 32, _dbg_z);
 fun _debug2(text) _dbg.b.sprite.SetImage(_to_image(text, _dbg.color, _dbg.font));
 
-fun _debug(text) _debug1(text);
-
 #! --- main set-ups --- #
 
 g_ticks = 0;
@@ -344,13 +342,14 @@ fun boot_progress_callback(duration, progression)
     update_progress_bar(duration, 0);
     update_progress_fill(progression, 0);
     update_progress_label(progression, 0);
-    if (duration > 2) quit_callback();
 }
 Plymouth.SetBootProgressFunction(boot_progress_callback);
 
+fun root_mounted_callback() { _debug1("root mounted"); }
+Plymouth.SetRootMountedFunction(root_mounted_callback);
+
 fun quit_callback()
 {
-    _debug("quit");
     bg.opacity = 0; draw_bg();
     progress.opacity = 0; draw_progress();
     progress.bar.opacity = 0; draw_progress_state();
@@ -372,4 +371,5 @@ Plymouth.SetDisplayPasswordFunction(dummy2);
 Plymouth.SetDisplayMessageFunction(dummy1);
 Plymouth.SetHideMessageFunction(dummy1);
 Plymouth.SetMessageFunction(dummy1);
-Plymouth.SetUpdateStatusFunction(dummy1);
+Plymouth.SetUpdateStatusFunction(dummy1); # * for debug;
+# * Plymouth.SetKeyboardInputFunction;
