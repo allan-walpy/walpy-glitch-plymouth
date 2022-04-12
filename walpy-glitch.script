@@ -180,7 +180,7 @@ _msg.info.bg.z = _msg.info.z;
 _msg.info.label;
 _msg.info.label.offset;
 _msg.info.label.offset.x = 0;
-_msg.info.label.offset.y = _msg.info.bg.offset.y - 4;
+_msg.info.label.offset.y = _msg.info.bg.offset.y - 56;
 _msg.info.label.z = _msg.info.z + 1;
 _msg.info.label.max_length = 36;
 _msg.info.label.font = "Monospace 64px";
@@ -521,7 +521,7 @@ fun set_message_sys_label(prompt) {
     message.sys.label.text = get_message_sys_text(prompt);
     message.sys.label.image = _to_image(message.sys.label.text, _msg.sys.label.color, _msg.sys.label.font);
     message.sys.label.width = message.sys.label.image.GetWidth();
-    message.sys.label.height = message.sys.label.GetHeight();
+    message.sys.label.height = message.sys.label.image.GetHeight();
     message.sys.label.x = _get_center_x(message.sys.label.width) + _msg.sys.label.offset.x;
     message.sys.label.y = _get_top(message.sys.label.height) + _msg.sys.label.offset.y;
     message.sys.label.z = _msg.sys.label.z;
@@ -572,7 +572,7 @@ show_message_info_bg();
 fun get_message_info_text(msg)
 {
     r = msg;
-    for (i = _get_length(msg); i < _msg.info.label.max_length; i++) r += "-";
+    for (i = _get_length(msg); i < _msg.info.label.max_length; i++) r += " ";
     return r;
 }
 
@@ -582,7 +582,7 @@ fun set_message_info_label(msg) {
     message.info.label.text = get_message_info_text(msg);
     message.info.label.image = _to_image(message.info.label.text, _msg.info.label.color, _msg.info.label.font);
     message.info.label.width = message.info.label.image.GetWidth();
-    message.info.label.height = message.info.label.GetHeight();
+    message.info.label.height = message.info.label.image.GetHeight();
     message.info.label.x = _get_center_x(message.info.label.width) + _msg.info.label.offset.x;
     message.info.label.y = _get_bottom(message.info.label.height) + _msg.info.label.offset.y;
     message.info.label.z = _msg.info.label.z;
@@ -597,7 +597,7 @@ fun hide_message_info_label() { message.info.label.opacity = 0; draw_message_inf
 
 fun show_message_info_prompt(msg) {
     set_message_info_bg(); show_message_info_bg();
-    set_message_info_label(msgt); show_message_info_label();
+    set_message_info_label(msg); show_message_info_label();
 }
 fun hide_message_info_prompt() if (message.info.is_set) { hide_message_info_bg(); hide_message_info_label(); }
 
