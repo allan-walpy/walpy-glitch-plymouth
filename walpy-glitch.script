@@ -2,7 +2,8 @@
 
 _file;
 _file.logo = "logo.png";
-_file.bg_image = "background.png";
+_file.bg = "background.png";
+_file.bg_action = "background.png";
 _file.progress = "progress.png";
 _file.sys_message = "message.system.png";
 _file.info_message = "message.info.png";
@@ -53,7 +54,6 @@ _prg;
 _prg.offset;
 _prg.offset.x = 0;
 _prg.offset.y = -20;
-_prg.dim = 0.3;
 
 _prg.bg;
 _prg.bg.z = _progress_z;
@@ -123,6 +123,8 @@ _prg.label.color.g = 1;
 _prg.label.color.b = 1;
 _prg.label.color.a = 1;
 
+_action_dim = 0.3;
+
 _pass;
 _pass.z = _password_z;
 
@@ -146,13 +148,35 @@ _pass.bullets.color.a = 1;
 _msg;
 _msg.z = _message_z;
 
+_msg.info;
+_msg.info.z = _msg.z + 1;
+
+_msg.info.bg;
+_msg.info.bg.offset;
+_msg.info.bg.offset.x = 0;
+_msg.info.bg.offset.y = 16;
+_msg.info.bg.z = _msg.info.z;
+
+_msg.info.label;
+_msg.info.label.offset;
+_msg.info.label.offset.x = 0;
+_msg.info.label.offset.y = _msg.info.bg.offset.y + 56;
+_msg.info.label.z = _msg.info.z + 1;
+_msg.info.label.max_length = 36;
+_msg.info.label.font = "Monospace 64px";
+_msg.info.label.color;
+_msg.info.label.color.r = 0;
+_msg.info.label.color.g = 0;
+_msg.info.label.color.b = 0;
+_msg.info.label.color.a = 1;
+
 _msg.sys;
 _msg.sys.z = _msg.z + 13;
 
 _msg.sys.bg;
 _msg.sys.bg.offset;
 _msg.sys.bg.offset.x = 0;
-_msg.sys.bg.offset.y = 16;
+_msg.sys.bg.offset.y = _msg.info.bg.offset.y + 16 + 192;
 _msg.sys.bg.z = _msg.sys.z;
 
 _msg.sys.label;
@@ -167,28 +191,6 @@ _msg.sys.label.color.r = 1;
 _msg.sys.label.color.g = 1;
 _msg.sys.label.color.b = 1;
 _msg.sys.label.color.a = 1;
-
-_msg.info;
-_msg.info.z = _msg.z + 1;
-
-_msg.info.bg;
-_msg.info.bg.offset;
-_msg.info.bg.offset.x = 0;
-_msg.info.bg.offset.y = -16;
-_msg.info.bg.z = _msg.info.z;
-
-_msg.info.label;
-_msg.info.label.offset;
-_msg.info.label.offset.x = 0;
-_msg.info.label.offset.y = _msg.info.bg.offset.y - 56;
-_msg.info.label.z = _msg.info.z + 1;
-_msg.info.label.max_length = 36;
-_msg.info.label.font = "Monospace 64px";
-_msg.info.label.color;
-_msg.info.label.color.r = 0;
-_msg.info.label.color.g = 0;
-_msg.info.label.color.b = 0;
-_msg.info.label.color.a = 1;
 
 fun _get_length (string) { for (i = 0; String(string).CharAt(i); i++) { } return i; }
 
@@ -226,7 +228,7 @@ Window.SetBackgroundBottomColor(_bg.color.bottom.r, _bg.color.bottom.g , _bg.col
 
 bg;
 
-bg.filename = _file.bg_image;
+bg.filename = _file.bg;
 bg.image = Image(bg.filename);
 bg.width = bg.image.GetWidth();
 bg.height = bg.image.GetHeight();
@@ -420,11 +422,28 @@ fun set_progress_all(opacity)
     progress.fill.opacity = opacity; draw_progress_fill();
     progress.label.opacity = opacity; draw_progress_label();
 }
-
-fun draw_progress_all() set_progress_all(1);
 fun hide_progress_all() set_progress_all(0);
-fun dim_progress_all() set_progress_all(_prg.dim);
-fun undim_progress_all() set_progress_all(1);
+fun show_progress_all() set_progress_all(1);
+
+# #! --- bacground_image ---#
+
+# bg.action;
+# bg.action.filename = _file.bg_action;
+# bg.action.image = Image(bg.filename);
+# bg.action.width = bg.action.image.GetWidth();
+# bg.action.height = bg.action.image.GetHeight();
+# bg.action.x = _screen_x;
+# bg.action.y = _screen_y;
+# bg.action.z = _bg.image.action.z;
+# bg.action.opacity = 0;
+# bg.action.sprite = Sprite(bg.action.image);
+
+# fun draw_bg() _draw_image(bg);
+# draw_bg();
+
+# fun dim_progress_all() set_progress_all(_prg.dim);
+# fun undim_progress_all() set_progress_all(1);
+
 
 #! --- password;bg --- #
 
@@ -553,7 +572,7 @@ fun set_message_info_bg()
     message.info.bg.width = message.info.bg.image.GetWidth();
     message.info.bg.height = message.info.bg.image.GetHeight();
     message.info.bg.x = _get_center_x(message.info.bg.width) + _msg.info.bg.offset.x;
-    message.info.bg.y = _get_bottom(message.info.bg.height) + _msg.info.bg.offset.y;
+    message.info.bg.y = _get_top(message.info.bg.height) + _msg.info.bg.offset.y;
     message.info.bg.z = _msg.info.bg.z;
     message.info.bg.opacity = 0;
     message.info.bg.sprite = Sprite(message.info.bg.image);
@@ -584,7 +603,7 @@ fun set_message_info_label(msg) {
     message.info.label.width = message.info.label.image.GetWidth();
     message.info.label.height = message.info.label.image.GetHeight();
     message.info.label.x = _get_center_x(message.info.label.width) + _msg.info.label.offset.x;
-    message.info.label.y = _get_bottom(message.info.label.height) + _msg.info.label.offset.y;
+    message.info.label.y = _get_top(message.info.label.height) + _msg.info.label.offset.y;
     message.info.label.z = _msg.info.label.z;
     message.info.label.opacity = 0;
     message.info.label.sprite = Sprite(message.info.label.image);
@@ -600,7 +619,6 @@ fun show_message_info_prompt(msg) {
     set_message_info_label(msg); show_message_info_label();
 }
 fun hide_message_info_prompt() if (message.info.is_set) { hide_message_info_bg(); hide_message_info_label(); }
-
 
 #! --- callback --- #
 
