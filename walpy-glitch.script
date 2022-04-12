@@ -319,10 +319,8 @@ fun get_progress_bar_text(time) {
         mod = (shift + i) % (spacing + s_length);
         if (mod >= spacing)
             if (direction) r += s; else r = s + r;
-        else
-            if (direction) r += bg; else r = bg + r;
+            else if (direction) r += bg; else r = bg + r;
     }
-
     return r;
 }
 
@@ -580,14 +578,12 @@ fun set_message_info_bg()
     message.info.bg.opacity = 0;
     message.info.bg.sprite = Sprite(message.info.bg.image);
     message.info.is_set = 1;
+    _debug1("v");
 }
 
 fun draw_message_info_bg() _draw_image(message.info.bg);
 fun show_message_info_bg() { message.info.bg.opacity = 1; draw_message_info_bg(); }
 fun hide_message_info_bg() { message.info.bg.opacity = 0; draw_message_info_bg(); }
-
-set_message_info_bg();
-show_message_info_bg();
 
 #! --- message;info;label --- #
 
@@ -641,6 +637,7 @@ fun display_password_callback(prompt, bullets)
     action_dim();
     show_password_prompt(bullets);
     show_message_sys_prompt(prompt);
+    show_message_info_prompt(">_>");
 }
 Plymouth.SetDisplayPasswordFunction(display_password_callback);
 
@@ -649,8 +646,15 @@ fun display_normal_callback()
     hide_password_prompt();
     hide_message_sys_prompt();
     action_restore();
+    hide_message_info_prompt();
 }
 Plymouth.SetDisplayNormalFunction(display_normal_callback);
+
+fun set_message_callback(msg)
+{
+    #show_message_info_prompt(msg);
+}
+Plymouth.SetMessageFunction(set_message_callback);
 
 fun quit_callback()
 {
@@ -673,6 +677,5 @@ fun dummy2(a, b) {}
 Plymouth.SetDisplayQuestionFunction(dummy2);
 Plymouth.SetDisplayMessageFunction(dummy1);
 Plymouth.SetHideMessageFunction(dummy1);
-Plymouth.SetMessageFunction(dummy1);
 Plymouth.SetUpdateStatusFunction(dummy1); # * for debug;
 # * Plymouth.SetKeyboardInputFunction;
