@@ -150,6 +150,7 @@ _pass.bullets.color.a = 1;
 
 _msg;
 _msg.z = _message_z;
+_msg.time = Math.Int(50 * 2.5);
 
 _msg.info;
 _msg.info.z = _msg.z + 1;
@@ -232,6 +233,7 @@ pile.length = 0;
 fun pile_add(method, duration)
 {
     pile.length++;
+    data; data.exec;
     data.exec = method;
     data.tick = g_ticks + duration;
     data.is_alive = 1;
@@ -241,7 +243,7 @@ fun pile_execute() {
     for(i = 0; i < pile.length; i++)
     {
         data = pile[i];
-        if (data.is_alive && (data.tick >= g_ticks)) { data.is_alive = 0; data.exec(); }
+        if (data.is_alive && (data.tick <= g_ticks)) { data.is_alive = 0; data.exec(); }
     }
 }
 
@@ -671,9 +673,8 @@ Plymouth.SetDisplayNormalFunction(display_normal_callback);
 
 fun set_message_callback(msg)
 {
-    _debug1("add" + msg);
     show_message_info_prompt(msg);
-    pile_add(hide_message_info_prompt, 750);
+    pile_add(hide_message_info_prompt, _msg.time);
 }
 Plymouth.SetMessageFunction(set_message_callback);
 Plymouth.SetDisplayMessageFunction(set_message_callback); #!__ tmp;
