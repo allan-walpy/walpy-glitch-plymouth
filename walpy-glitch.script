@@ -578,7 +578,6 @@ fun set_message_info_bg()
     message.info.bg.opacity = 0;
     message.info.bg.sprite = Sprite(message.info.bg.image);
     message.info.is_set = 1;
-    _debug1("v");
 }
 
 fun draw_message_info_bg() _draw_image(message.info.bg);
@@ -637,7 +636,6 @@ fun display_password_callback(prompt, bullets)
     action_dim();
     show_password_prompt(bullets);
     show_message_sys_prompt(prompt);
-    show_message_info_prompt(">_>");
 }
 Plymouth.SetDisplayPasswordFunction(display_password_callback);
 
@@ -646,7 +644,6 @@ fun display_normal_callback()
     hide_password_prompt();
     hide_message_sys_prompt();
     action_restore();
-    hide_message_info_prompt();
 }
 Plymouth.SetDisplayNormalFunction(display_normal_callback);
 
