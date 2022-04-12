@@ -1,10 +1,10 @@
 #!/bin/bash
 
-sleep 3
+sleep 1
 
 #plymouth ask-for-password --prompt "specify password: " | ./test.reader --read-from-stdin
 
-#sleep 3
+sleep 1
 
 exit 0
 

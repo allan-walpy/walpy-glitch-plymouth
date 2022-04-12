@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- created by allan_walpy in vscode; licensed under mit;-->
-<svg xmlns="http://www.w3.org/2000/svg" width="320" height="80">
+<svg xmlns="http://www.w3.org/2000/svg" width="268" height="66">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100;200;300;400;500;600;700');
         .button {
             font-family: "Roboto Mono", monospace;
             font-size: 12px;
-            font-weight: 100;
+            font-weight: 300;
         }
         .label {
             font-family:"Roboto Mono", monospace;
@@ -21,42 +21,43 @@
     </style>
     <g id="progress" opacity="1">
         <rect id="window"
-            x="30" y="16" width="260" height="50" rx="4"
+            x="4" y="8" width="260" height="50" rx="4"
             fill="#eee" opacity="1"/>
 
         <text id="window_label" class="label"
-            x="34" y="26" fill="#333">asylum://digital &lt;&lt; allan_walpy</text>
+            x="8" y="18" fill="#333">asylum://digital &lt;&lt; allan_walpy</text>
 
         <circle id="button_one"
-            cx="278" cy="16" r="8"
-            fill="#e44" opacity="1" />
-        <text class="button" x="274" y="20" fill="#eee">!</text>
+            cx="252" cy="8" r="8"
+            fill="#a22" opacity="1" />
+        <text class="button" x="248" y="12" fill="#eee">!</text>
 
         <circle id="button_two"
-            cx="256" cy="16" r="8"
+            cx="230" cy="8" r="8"
             fill="#484" opacity="1" />
-        <text class="button" x="252" y="20" fill="#eee">&lt;</text>
+        <text class="button" x="226" y="12" fill="#eee">&lt;</text>
 
         <circle id="button_three"
-            cx="234" cy="16" r="8"
+            cx="208" cy="8" r="8"
             fill="#44a" opacity="1" />
-        <text class="button" x="230" y="20" fill="#eee">0</text>
+        <text class="button" x="204" y="12" fill="#eee">0</text>
 
         <rect id="terminal"
-            x="32" y="32" width="256" height="32" rx="4"
+            x="6" y="24" width="256" height="32" rx="4"
             fill="#111" opacity="1"  />
 
         <text id="tmp_progress_line_1" class="tmp_label"
-            x="34" y="41" fill="#fff" opacity="1">
+            x="8" y="33" fill="#fff" opacity="0">
             &lt;&lt;|--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;
         </text>
         <text id="tmp_progress_line_2" class="tmp_label"
-            x="34" y="52" fill="#fff" opacity="1">
+            x="8" y="44" fill="#fff" opacity="0">
             -&lt;&lt;|--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--&lt;&lt;--
         </text>
 
-        <rect id="tmp_progress_filler" x="32" y="56" width="256" height="8" rx="4"
-            fill="#2f4" opacity="1" />
+        <rect id="tmp_progress_filler"
+            x="6" y="48" width="256" height="8"
+            fill="#2f4" opacity="0" />
     </g>
 
 </svg>
