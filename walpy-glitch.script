@@ -3,7 +3,7 @@
 _file;
 _file.logo = "logo.png";
 _file.bg = "background.png";
-_file.bg_action = "background.png";
+_file.action = "bacground.action.png";
 _file.progress = "progress.png";
 _file.sys_message = "message.system.png";
 _file.info_message = "message.info.png";
@@ -15,6 +15,7 @@ _file.password.bg = "password.png";
 _bg_z = 0;
 _logo_z = 3;
 _progress_z = 5;
+_action_bg = 13;
 _password_z = 15;
 _message_z = 25;
 _dbg_z = 100;
@@ -123,7 +124,9 @@ _prg.label.color.g = 1;
 _prg.label.color.b = 1;
 _prg.label.color.a = 1;
 
-_action_dim = 0.3;
+_action;
+_action.dim = 0.9;
+_action.z = _action_bg;
 
 _pass;
 _pass.z = _password_z;
@@ -425,25 +428,25 @@ fun set_progress_all(opacity)
 fun hide_progress_all() set_progress_all(0);
 fun show_progress_all() set_progress_all(1);
 
-# #! --- bacground_image ---#
+#! --- action;bg ---#
 
-# bg.action;
-# bg.action.filename = _file.bg_action;
-# bg.action.image = Image(bg.filename);
-# bg.action.width = bg.action.image.GetWidth();
-# bg.action.height = bg.action.image.GetHeight();
-# bg.action.x = _screen_x;
-# bg.action.y = _screen_y;
-# bg.action.z = _bg.image.action.z;
-# bg.action.opacity = 0;
-# bg.action.sprite = Sprite(bg.action.image);
+action;
+action.filename = _file.action;
+action.image = Image(action.filename);
+action.width = action.image.GetWidth();
+action.height = action.image.GetHeight();
+action.x = _screen_x;
+action.y = _screen_y;
+action.z = _action.z;
+action.opacity = 0;
+action.sprite = Sprite(action.image);
 
-# fun draw_bg() _draw_image(bg);
-# draw_bg();
+fun draw_action() _draw_image(action);
+fun set_action(opacity) { action.opacity = opacity; draw_action(); }
+fun action_dim() set_action(_action.dim);
+fun action_restore() set_action(0);
 
-# fun dim_progress_all() set_progress_all(_prg.dim);
-# fun undim_progress_all() set_progress_all(1);
-
+draw_action();
 
 #! --- password;bg --- #
 
@@ -635,10 +638,9 @@ Plymouth.SetBootProgressFunction(boot_progress_callback);
 
 fun display_password_callback(prompt, bullets)
 {
-    dim_progress_all();
+    action_dim();
     show_password_prompt(bullets);
     show_message_sys_prompt(prompt);
-    show_message_info_prompt("hey, how are you?");
 }
 Plymouth.SetDisplayPasswordFunction(display_password_callback);
 
@@ -646,8 +648,7 @@ fun display_normal_callback()
 {
     hide_password_prompt();
     hide_message_sys_prompt();
-    hide_message_info_prompt();
-    undim_progress_all();
+    action_restore();
 }
 Plymouth.SetDisplayNormalFunction(display_normal_callback);
 
