@@ -2,9 +2,9 @@
 
 sleep 3
 
-plymouth ask-for-password --prompt "specify password: " | ./test.reader --read-from-stdin
+#plymouth ask-for-password --prompt "specify password: " | ./test.reader --read-from-stdin
 
-sleep 3
+#sleep 3
 
 exit 0
 

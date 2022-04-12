@@ -149,7 +149,23 @@ _msg.sys;
 _msg.sys.z = _msg.z + 13;
 
 _msg.sys.bg;
+_msg.sys.bg.offset;
+_msg.sys.bg.offset.x = 0;
+_msg.sys.bg.offset.y = 16;
 _msg.sys.bg.z = _msg.sys.z;
+
+_msg.sys.label;
+_msg.sys.label.offset;
+_msg.sys.label.offset.x = 0;
+_msg.sys.label.offset.y = _msg.sys.bg.offset.y + 56;
+_msg.sys.label.z = _msg.sys.z + 1;
+_msg.sys.label.max_length = 36;
+_msg.sys.label.font = "Monospace 48";
+_msg.sys.label.color;
+_msg.sys.label.color.r = 1;
+_msg.sys.label.color.g = 1;
+_msg.sys.label.color.b = 1;
+_msg.sys.label.color.a = 1;
 
 fun _get_length (string) { for (i = 0; String(string).CharAt(i); i++) { } return i; }
 
@@ -442,11 +458,12 @@ fun hide_password_bullets() { password.bullets.opacity = 0; draw_password_bullet
 fun show_password_prompt(bullets) { set_password_bg(); show_password_bg(); set_password_bullets(bullets); show_password_bullets(); }
 fun hide_password_prompt() if (password.is_set) { hide_password_bg();  hide_password_bullets(); }
 
-#! --- message;system --- #
+#! --- message;system;bg --- #
 
 message;
 message.system;
 message.system.is_set = 0;
+
 message.system.bg;
 
 fun set_message_system_bg()
@@ -454,8 +471,8 @@ fun set_message_system_bg()
     message.system.bg.image = Image(_file.system_message);
     message.system.bg.width = message.system.bg.image.GetWidth();
     message.system.bg.height = message.system.bg.image.GetHeight();
-    message.system.bg.x = _get_center_x(message.system.bg.width);
-    message.system.bg.y = _get_top(message.system.bg.height);
+    message.system.bg.x = _get_center_x(message.system.bg.width) + _msg.sys.bg.offset.x;
+    message.system.bg.y = _get_top(message.system.bg.height) + _msg.sys.bg.offset.y;
     message.system.bg.z = _msg.sys.bg.z;
     message.system.bg.opacity = 0;
     message.system.bg.sprite = Sprite(message.system.bg.image);
@@ -464,10 +481,43 @@ fun set_message_system_bg()
 
 fun draw_message_system_bg() _draw_image(message.system.bg);
 fun show_message_system_bg() { message.system.bg.opacity = 1; draw_message_system_bg(); }
-fun hide_message_system() { message.system.bg.opacity = 0; draw_message_system_bg(); }
+fun hide_message_system_bg() { message.system.bg.opacity = 0; draw_message_system_bg(); }
 
-set_message_system_bg();
-show_message_system_bg();
+#! --- message;system;label --- #
+
+fun get_message_system_text(prompt)
+{
+    r = prompt;
+    for (i = _get_length(prompt); i < _msg.sys.label.max_length; i++) r += " ";
+    return r;
+}
+
+message.system.label;
+
+fun set_message_system_label(prompt) {
+    message.system.label.text = get_message_system_text(prompt);
+    message.system.label.image = _to_image(message.system.label.text, _msg.sys.label.color, _msg.sys.label.font);
+    message.system.label.width = message.system.label.image.GetWidth();
+    message.system.label.height = message.system.label.GetHeight();
+    message.system.label.x = _get_center_x(message.system.label.width) + _msg.sys.label.offset.x;
+    message.system.label.y = _get_top(message.system.label.height) + _msg.sys.label.offset.y;
+    message.system.label.z = _msg.sys.label.z;
+    message.system.label.opacity = 0;
+    message.system.label.sprite = Sprite(message.system.label.image);
+    message.system.is_set = 1;
+}
+
+fun draw_message_system_label() _draw_image(message.system.label);
+fun show_message_system_label() { message.system.label.opacity = 1; draw_message_system_label(); }
+fun hide_message_system_label() { message.system.label.opacity = 0; draw_message_system_label(); }
+
+fun show_message_system_prompt(prompt) {
+    set_message_system_bg(); show_message_system_bg();
+    set_message_system_label(prompt); show_message_system_label();
+}
+fun hide_message_system_prompt() if (message.system.is_set) { hide_message_system_bg(); hide_message_system_label(); }
+
+
 
 #! --- callback --- #
 
@@ -486,12 +536,14 @@ fun display_password_callback(prompt, bullets)
 {
     dim_progress_all();
     show_password_prompt(bullets);
+    show_message_system_prompt(prompt);
 }
 Plymouth.SetDisplayPasswordFunction(display_password_callback);
 
 fun display_normal_callback()
 {
     hide_password_prompt();
+    hide_message_system_prompt();
     undim_progress_all();
 }
 Plymouth.SetDisplayNormalFunction(display_normal_callback);
