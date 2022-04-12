@@ -4,7 +4,7 @@ _file;
 _file.logo = "logo.png";
 _file.bg_image = "background.png";
 _file.progress = "progress.png";
-_file.system_message = "message.system.png";
+_file.sys_message = "message.system.png";
 _file.info_message = "message.info.png";
 _file.password;
 _file.password.bg = "password.png";
@@ -174,21 +174,21 @@ _msg.info.z = _msg.z + 1;
 _msg.info.bg;
 _msg.info.bg.offset;
 _msg.info.bg.offset.x = 0;
-_msg.info.bg.offset.y = 16;
+_msg.info.bg.offset.y = -16;
 _msg.info.bg.z = _msg.info.z;
 
-_msg.sys.label;
-_msg.sys.label.offset;
-_msg.sys.label.offset.x = 0;
-_msg.sys.label.offset.y = _msg.info.bg.offset.y + 56;
-_msg.sys.label.z = _msg.info.z + 1;
-_msg.sys.label.max_length = 36;
-_msg.sys.label.font = "Monospace 64px";
-_msg.sys.label.color;
-_msg.sys.label.color.r = 0;
-_msg.sys.label.color.g = 0;
-_msg.sys.label.color.b = 0;
-_msg.sys.label.color.a = 1;
+_msg.info.label;
+_msg.info.label.offset;
+_msg.info.label.offset.x = 0;
+_msg.info.label.offset.y = _msg.info.bg.offset.y - 4;
+_msg.info.label.z = _msg.info.z + 1;
+_msg.info.label.max_length = 36;
+_msg.info.label.font = "Monospace 64px";
+_msg.info.label.color;
+_msg.info.label.color.r = 0;
+_msg.info.label.color.g = 0;
+_msg.info.label.color.b = 0;
+_msg.info.label.color.a = 1;
 
 fun _get_length (string) { for (i = 0; String(string).CharAt(i); i++) { } return i; }
 
@@ -484,61 +484,61 @@ fun hide_password_prompt() if (password.is_set) { hide_password_bg();  hide_pass
 #! --- message;system;bg --- #
 
 message;
-message.system;
-message.system.is_set = 0;
+message.sys;
+message.sys.is_set = 0;
 
-message.system.bg;
+message.sys.bg;
 
-fun set_message_system_bg()
+fun set_message_sys_bg()
 {
-    message.system.bg.image = Image(_file.system_message);
-    message.system.bg.width = message.system.bg.image.GetWidth();
-    message.system.bg.height = message.system.bg.image.GetHeight();
-    message.system.bg.x = _get_center_x(message.system.bg.width) + _msg.sys.bg.offset.x;
-    message.system.bg.y = _get_top(message.system.bg.height) + _msg.sys.bg.offset.y;
-    message.system.bg.z = _msg.sys.bg.z;
-    message.system.bg.opacity = 0;
-    message.system.bg.sprite = Sprite(message.system.bg.image);
-    message.system.is_set = 1;
+    message.sys.bg.image = Image(_file.sys_message);
+    message.sys.bg.width = message.sys.bg.image.GetWidth();
+    message.sys.bg.height = message.sys.bg.image.GetHeight();
+    message.sys.bg.x = _get_center_x(message.sys.bg.width) + _msg.sys.bg.offset.x;
+    message.sys.bg.y = _get_top(message.sys.bg.height) + _msg.sys.bg.offset.y;
+    message.sys.bg.z = _msg.sys.bg.z;
+    message.sys.bg.opacity = 0;
+    message.sys.bg.sprite = Sprite(message.sys.bg.image);
+    message.sys.is_set = 1;
 }
 
-fun draw_message_system_bg() _draw_image(message.system.bg);
-fun show_message_system_bg() { message.system.bg.opacity = 1; draw_message_system_bg(); }
-fun hide_message_system_bg() { message.system.bg.opacity = 0; draw_message_system_bg(); }
+fun draw_message_sys_bg() _draw_image(message.sys.bg);
+fun show_message_sys_bg() { message.sys.bg.opacity = 1; draw_message_sys_bg(); }
+fun hide_message_sys_bg() { message.sys.bg.opacity = 0; draw_message_sys_bg(); }
 
 #! --- message;system;label --- #
 
-fun get_message_system_text(prompt)
+fun get_message_sys_text(prompt)
 {
     r = prompt;
     for (i = _get_length(prompt); i < _msg.sys.label.max_length; i++) r += " ";
     return r;
 }
 
-message.system.label;
+message.sys.label;
 
-fun set_message_system_label(prompt) {
-    message.system.label.text = get_message_system_text(prompt);
-    message.system.label.image = _to_image(message.system.label.text, _msg.sys.label.color, _msg.sys.label.font);
-    message.system.label.width = message.system.label.image.GetWidth();
-    message.system.label.height = message.system.label.GetHeight();
-    message.system.label.x = _get_center_x(message.system.label.width) + _msg.sys.label.offset.x;
-    message.system.label.y = _get_top(message.system.label.height) + _msg.sys.label.offset.y;
-    message.system.label.z = _msg.sys.label.z;
-    message.system.label.opacity = 0;
-    message.system.label.sprite = Sprite(message.system.label.image);
-    message.system.is_set = 1;
+fun set_message_sys_label(prompt) {
+    message.sys.label.text = get_message_sys_text(prompt);
+    message.sys.label.image = _to_image(message.sys.label.text, _msg.sys.label.color, _msg.sys.label.font);
+    message.sys.label.width = message.sys.label.image.GetWidth();
+    message.sys.label.height = message.sys.label.GetHeight();
+    message.sys.label.x = _get_center_x(message.sys.label.width) + _msg.sys.label.offset.x;
+    message.sys.label.y = _get_top(message.sys.label.height) + _msg.sys.label.offset.y;
+    message.sys.label.z = _msg.sys.label.z;
+    message.sys.label.opacity = 0;
+    message.sys.label.sprite = Sprite(message.sys.label.image);
+    message.sys.is_set = 1;
 }
 
-fun draw_message_system_label() _draw_image(message.system.label);
-fun show_message_system_label() { message.system.label.opacity = 1; draw_message_system_label(); }
-fun hide_message_system_label() { message.system.label.opacity = 0; draw_message_system_label(); }
+fun draw_message_sys_label() _draw_image(message.sys.label);
+fun show_message_sys_label() { message.sys.label.opacity = 1; draw_message_sys_label(); }
+fun hide_message_sys_label() { message.sys.label.opacity = 0; draw_message_sys_label(); }
 
-fun show_message_system_prompt(prompt) {
-    set_message_system_bg(); show_message_system_bg();
-    set_message_system_label(prompt); show_message_system_label();
+fun show_message_sys_prompt(prompt) {
+    set_message_sys_bg(); show_message_sys_bg();
+    set_message_sys_label(prompt); show_message_sys_label();
 }
-fun hide_message_system_prompt() if (message.system.is_set) { hide_message_system_bg(); hide_message_system_label(); }
+fun hide_message_sys_prompt() if (message.sys.is_set) { hide_message_sys_bg(); hide_message_sys_label(); }
 
 #! --- message;info;bg ---#
 
@@ -563,6 +563,9 @@ fun set_message_info_bg()
 fun draw_message_info_bg() _draw_image(message.info.bg);
 fun show_message_info_bg() { message.info.bg.opacity = 1; draw_message_info_bg(); }
 fun hide_message_info_bg() { message.info.bg.opacity = 0; draw_message_info_bg(); }
+
+set_message_info_bg();
+show_message_info_bg();
 
 #! --- message;info;label --- #
 
@@ -616,7 +619,7 @@ fun display_password_callback(prompt, bullets)
 {
     dim_progress_all();
     show_password_prompt(bullets);
-    show_message_system_prompt(prompt);
+    show_message_sys_prompt(prompt);
     show_message_info_prompt("hey, how are you?");
 }
 Plymouth.SetDisplayPasswordFunction(display_password_callback);
@@ -624,7 +627,7 @@ Plymouth.SetDisplayPasswordFunction(display_password_callback);
 fun display_normal_callback()
 {
     hide_password_prompt();
-    hide_message_system_prompt();
+    hide_message_sys_prompt();
     hide_message_info_prompt();
     undim_progress_all();
 }
@@ -644,7 +647,7 @@ fun dummy1(a) {}
 fun dummy2(a, b) {}
 
 # fun root_mounted_callback() {
-#     draw_message_system();
+#     draw_message_sys();
 # }
 # Plymouth.SetRootMountedFunction(root_mounted_callback);
 
