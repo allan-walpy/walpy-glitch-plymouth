@@ -207,7 +207,7 @@ fun _get_right(width)     _screen_x + _screen_width - width;
 fun _draw_sprite(s, x, y, z, o) { s.SetPosition(x, y, z); s.SetOpacity(o); }
 fun _draw_image(i) _draw_sprite(i.sprite, i.x, i.y, i.z, i.opacity); # TODO: addd resize;
 fun _to_image(text, color, font) Image.Text(text, color.r, color.g, color.b, color.a, font);
-fun _get_scale(width, height) Math.Max(_screen_width / width, _screen_height / height); #! TODO: not used;
+fun _get_scale(width, height) Math.Max(_screen_width / width, _screen_height / height); # TODO: not used;
 
 #! --- debug --- #
 
@@ -222,12 +222,30 @@ fun _debug2(text) _dbg.b.sprite.SetImage(_to_image(text, _dbg.color, _dbg.font))
 
 #! --- main set-ups --- #
 
-g_ticks = 0;
-
 Window.SetBackgroundTopColor(_bg.color.top.r, _bg.color.top.g, _bg.color.top.b);
 Window.SetBackgroundBottomColor(_bg.color.bottom.r, _bg.color.bottom.g , _bg.color.bottom.b);
 
-#! --- bacground_image ---#
+g_ticks = 0;
+
+pile;
+pile.length = 0;
+fun pile_add(method, duration)
+{
+    pile.length++;
+    data.exec = method;
+    data.tick = g_ticks + duration;
+    data.is_alive = 1;
+    pile[pile.length - 1] = data;
+}
+fun pile_execute() {
+    for(i = 0; i < pile.length; i++)
+    {
+        data = pile[i];
+        if (data.is_alive && (data.tick >= g_ticks)) { data.is_alive = 0; data.exec(); }
+    }
+}
+
+#! --- bacground_image --- #
 
 bg;
 
@@ -620,7 +638,11 @@ fun hide_message_info_prompt() if (message.info.is_set) { hide_message_info_bg()
 
 #! --- callback --- #
 
-fun refresh_callback() g_ticks++;
+fun refresh_callback()
+{
+    g_ticks++;
+    pile_execute();
+}
 Plymouth.SetRefreshFunction(refresh_callback);
 
 fun boot_progress_callback(duration, progression)
@@ -649,9 +671,12 @@ Plymouth.SetDisplayNormalFunction(display_normal_callback);
 
 fun set_message_callback(msg)
 {
-    #show_message_info_prompt(msg);
+    _debug1("add" + msg);
+    show_message_info_prompt(msg);
+    pile_add(hide_message_info_prompt, 750);
 }
 Plymouth.SetMessageFunction(set_message_callback);
+Plymouth.SetDisplayMessageFunction(set_message_callback); #!__ tmp;
 
 fun quit_callback()
 {
@@ -672,7 +697,7 @@ fun dummy2(a, b) {}
 # Plymouth.SetRootMountedFunction(root_mounted_callback);
 
 Plymouth.SetDisplayQuestionFunction(dummy2);
-Plymouth.SetDisplayMessageFunction(dummy1);
+
 Plymouth.SetHideMessageFunction(dummy1);
 Plymouth.SetUpdateStatusFunction(dummy1); # * for debug;
 # * Plymouth.SetKeyboardInputFunction;
